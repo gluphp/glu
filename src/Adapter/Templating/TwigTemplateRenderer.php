@@ -58,10 +58,8 @@ final class TwigTemplateRenderer implements TemplateRenderer {
 
     public function registerFunction(_Function $function): void
     {
-        if ($this->initialized) {
-            return;
-        }
-        
+        $this->initialize();
+
         $options = [];
         if ($function->escape() === false) {
             $options['is_safe'] = 'html';
