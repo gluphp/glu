@@ -2,22 +2,11 @@
 
 namespace Glu\Extension\GoogleAnalytics;
 
-use ParagonIE\ConstantTime\Base64UrlSafe;
-use Glu\DataSource\Source;
 use Glu\DependencyInjection\ServiceLocator;
-use Glu\Event\Event;
 use Glu\Event\Listener;
 use Glu\Event\ResponseEvent;
 use Glu\Extension\BaseExtension;
-use Glu\Extension\User\LoggedInUser;
-use Glu\Http\Request;
-use Glu\Http\Response;
-use Glu\In;
-use Glu\Routing\Route;
-use Glu\SessionManagement;
-use Glu\Templating\Template;
 use Glu\Templating\TemplateRenderer;
-use Glu\App;
 
 final class GoogleAnalyticsExtension extends BaseExtension
 {
