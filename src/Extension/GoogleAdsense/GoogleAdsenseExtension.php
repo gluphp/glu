@@ -21,7 +21,7 @@ final class GoogleAdsenseExtension extends BaseExtension
         $this->usingAds = false;
     }
 
-    public static function load(ServiceLocator $locator, array $context): self
+    public static function load(ServiceLocator $locator, array $context): static
     {
         return new self($context['client_id']);
     }

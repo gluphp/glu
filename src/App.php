@@ -20,7 +20,7 @@ use Glu\Http\Response;
 use Glu\Routing\Router;
 use Glu\Templating\TemplateRenderer;
 
-final class App
+final class App implements AppInterface
 {
     private readonly Router $router;
     private readonly TemplateRenderer $templateRenderer;
@@ -60,7 +60,7 @@ final class App
         $this->logger = $logger ?? new NullLogger();
         $this->router = new Router();
         $this->cache = $cache ?? new FilesystemAdapter(
-            'tomato',
+            'glu',
             0,
             $cacheDir
         );
@@ -139,7 +139,6 @@ final class App
 
         $this->eventDispatcher = new EventDispatcher($my, $this->locator);
 
-
         $this->errorHandlers = [
             500 => function(\Throwable $e) {
                 return new Response(
@@ -150,14 +149,14 @@ final class App
         ];
     }
 
-    public function run(Request $request)
+    public function handle(Request $request, bool $send = true): Response
     {
         $this->currentRequest = $request;
         $cacheKey = (new CacheKeyCalculator())->key($request);
 
         $cachedResponse = $this->cache->getItem($cacheKey);
         if ($cachedResponse->isHit() && false) {
-            $this->sendResponse($cachedResponse->get());
+            $this->send($cachedResponse->get());
             exit();
         }
         //SessionManagement::start();
@@ -212,17 +211,19 @@ final class App
             $response->contents = '';
         }
 
-        $this->sendResponse($response);
+        if ($send) {
+            $this->send($response);
+        }
 
         $cachedResponse->set($response);
         $this->cache->save($cachedResponse);
 
         $this->endTime = \microtime(true);
 
-        //echo $this->endTime-$this->startTime;
+        return $response;
     }
 
-    private function sendResponse(Response $response): void
+    public function send(Response $response): void
     {
         $headers = \array_merge($this->defaultHeaders, $response->headers);
         foreach ($headers as $headerName => $headerValue) {
@@ -233,15 +234,15 @@ final class App
 
     public function get(string $path, callable $callback, ?string $name = null): void
     {
-        $this->path('GET', $path, $callback, $name);
+        $this->addPath('GET', $path, $callback, $name);
     }
 
     public function getStatic(string $path, string $callback, ?string $name = null): void
     {
-        $this->path('GET', $path, $callback, $name);
+        $this->addPath('GET', $path, $callback, $name);
     }
 
-    public function path(
+    public function addPath(
         string $method,
         string $path,
         callable|string $callback,
@@ -258,7 +259,7 @@ final class App
         }
     }
 
-    public function redirect(string $from, string $to, int $code = 302) {
+    public function addRedirect(string $from, string $to, int $code = 302) {
         $this->router->add('redirect_', 'GET', $from, function () use ($to, $code) {
             return new Response('', $code, [
                 'location' => $to
