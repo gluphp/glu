@@ -72,7 +72,7 @@ final class TwigTemplateRenderer implements TemplateRenderer {
     {
         $options = [];
         if ($function->escape() === false) {
-            $options['is_safe'] = 'html';
+            $options['is_safe'] = ['html'];
         }
 
         $this->twig->addFunction(

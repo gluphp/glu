@@ -2,8 +2,11 @@
 
 namespace Glu\DependencyInjection;
 
-final class ServiceLocator {
+use Psr\Container\ContainerInterface;
 
+final class ServiceLocator implements ContainerInterface {
+
+    private array $parameters;
     /** @var Service[] */
     private array $definitions;
     private array $synthetic;
@@ -11,8 +14,9 @@ final class ServiceLocator {
     /**
      * @param Service[] $services
      */
-    public function __construct(array $definitions)
+    public function __construct(array $definitions, array $parameters = [])
     {
+        $this->parameters = $parameters;
         $this->synthetic = [];
         $this->definitions = [];
         foreach ($definitions as $definition) {
@@ -43,12 +47,25 @@ final class ServiceLocator {
             return $this->synthetic[$id];
         }
 
+        if (\array_key_exists($id, $this->parameters)) {
+            return $this->parameters[$id];
+        }
+
         if (\array_key_exists($id, $this->definitions)) {
             return $this->instantiate($this->definitions[$id]);
         }
 
         return null;
     }
+
+    public function has(string $id): bool
+    {
+        return \array_key_exists($id, $this->synthetic) ||
+            \array_key_exists($id, $this->definitions) ||
+            \array_key_exists($id, $this->parameters)
+            ;
+    }
+
 
     public function add(Service $definition): void
     {

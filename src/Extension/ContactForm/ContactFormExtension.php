@@ -45,7 +45,7 @@ final class ContactFormExtension extends BaseExtension
                 'contact_form',
                 function() {
                     return <<<CODE
-<form action="." method="post">
+<form action="/contact-handle" method="post">
 
     <label for="name">Name:</label>
     <input type="text" id="name" name="name" required aria-label="Enter your name">
@@ -60,21 +60,23 @@ final class ContactFormExtension extends BaseExtension
 
 </form>
 CODE;
-                }
+                },
+                false
             )
         ];
     }
 
     public function routes(): array
     {
+        $source = $this->source;
         return [
             new Route(
                 'aaa',
                 ['GET', 'POST'],
-                '/contact',
-                function (Request $request, Response $response, array $args) {
+                '/contact-handle',
+                function (Request $request, Response $response, array $args) use ($source) {
                     if ($request->method === 'POST') {
-                        $this->source->insert('dev.glu.contact_form.messages', [
+                        $source->insert('dev.glu.contact_form.messages', [
                             'email' => $request->form('email'),
                             'message' => $request->form('message')
                         ]);
@@ -88,10 +90,10 @@ CODE;
                 'aaa',
                 'GET',
                 '/admin/contact',
-                function (Request $request, Response $response, array $args) {
+                function (Request $request, Response $response, array $args) use ($source) {
                     $response->contents = $this->render(
                         'admin_contact.html.twig',
-                        $this->source->fetch('dev.glu.contact_form.messages')
+                        $source->fetch('dev.glu.contact_form.messages')
                     );
                 }
             )
@@ -100,7 +102,9 @@ CODE;
 
     public function templateDirectories(): array
     {
-        return __DIR__ . '/Template';
+        return [
+            __DIR__ . '/Template'
+        ];
     }
 
 

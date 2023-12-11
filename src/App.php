@@ -83,7 +83,9 @@ final class App implements AppInterface
             //$this->sources[$name] = DbalSource::create($dsn);
         }
 
-        $this->locator = new ServiceLocator($services);
+        $this->locator = new ServiceLocator($services, [
+            'data_directory' => __DIR__ . '/../../../../var/data/'
+        ]);
 
         $templatesDirs = [
             $templatesDir
@@ -116,12 +118,14 @@ final class App implements AppInterface
                 //$this->sources[$name] = DbalSource::create($dsn);
             }
             foreach ($extension->routes() as $route) {
-                $this->router->add(
-                    $route->name(),
-                    $route->methods()[0],
-                    $route->path(),
-                    $route->controller()
-                );
+                foreach ($route->methods() as $method) {
+                    $this->router->add(
+                        $route->name(),
+                        $method,
+                        $route->path(),
+                        $route->controller()
+                    );
+                }
             }
         }
 
