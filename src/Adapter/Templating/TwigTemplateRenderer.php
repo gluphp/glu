@@ -53,6 +53,7 @@ final class TwigTemplateRenderer implements TemplateRenderer {
         $this->twig->addFunction(new TwigFunction('dump', function (mixed ...$values) {
             \var_dump($values);
         }));
+
         $this->initialized = true;
     }
 

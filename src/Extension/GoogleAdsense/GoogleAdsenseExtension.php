@@ -37,7 +37,7 @@ final class GoogleAdsenseExtension extends BaseExtension
 
         return [
             new _Function(
-                'adsense:ad',
+                'adsense_ad',
                 function(string $slot, string $format = 'link') use ($clientId) {
                     $this->usingAds = true;
                     return <<<CODE
