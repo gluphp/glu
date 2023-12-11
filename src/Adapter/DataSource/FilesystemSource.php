@@ -6,22 +6,23 @@ use Doctrine\DBAL\DriverManager;
 use Doctrine\DBAL\Tools\DsnParser;
 use Glu\DataSource\Source;
 
-final class DbalSource implements Source
+final class FilesystemSource implements Source
 {
     public function __construct(
-        private readonly \Doctrine\DBAL\Connection $connection
+        private readonly string $baseDirectory
     ) {}
 
-    public static function create(string $dsn): static
+    public static function create(string $baseDirectory): static
     {
-        return new self(
-            DriverManager::getConnection((new DsnParser())->parse($dsn))
-        );
+        return new self($baseDirectory);
     }
 
     public function insert(string $table, array $data)
     {
-        $this->connection->insert($table, $data);
+        $filePath = $this->baseDirectory.'/'.$table.'.csv';
+        $file = fopen($filePath, 'a');
+        fputcsv($file, $data);
+        fclose($file);
     }
 
     public function update(string $table, array $data, array $criteria)
