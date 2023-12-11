@@ -19,6 +19,7 @@ final class TwigTemplateRenderer implements TemplateRenderer {
     private TwigEnvironment $twig;
     private Router $router;
     private ?string $cacheDirectory;
+    private array $functions;
 
     public function __construct(
         array $directories,
@@ -29,6 +30,7 @@ final class TwigTemplateRenderer implements TemplateRenderer {
         $this->directories = $directories;
         $this->router = $router;
         $this->cacheDirectory = $cacheDirectory;
+        $this->functions = [];
     }
 
     private function initialize() {
@@ -54,13 +56,20 @@ final class TwigTemplateRenderer implements TemplateRenderer {
             \var_dump($values);
         }));
 
+        foreach ($this->functions as $function) {
+            $this->addFunction($function);
+        }
+
         $this->initialized = true;
     }
 
     public function registerFunction(_Function $function): void
     {
-        $this->initialize();
+        $this->functions[] = $function;
+    }
 
+    private function addFunction(_Function $function): void
+    {
         $options = [];
         if ($function->escape() === false) {
             $options['is_safe'] = 'html';
