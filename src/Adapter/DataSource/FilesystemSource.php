@@ -19,8 +19,11 @@ final class FilesystemSource implements Source
 
     public function insert(string $table, array $data)
     {
+        if (\is_dir($this->baseDirectory) === false) {
+            mkdir(directory: $this->baseDirectory, recursive: true);
+        }
         $filePath = $this->baseDirectory.'/'.$table.'.csv';
-        $file = fopen($filePath, 'a');
+        $file = fopen($filePath, 'a+');
         fputcsv($file, $data);
         fclose($file);
     }
@@ -32,7 +35,18 @@ final class FilesystemSource implements Source
 
     public function fetch(string $query, array $context = []): array
     {
-        return $this->connection->fetchAllAssociative($query, $context);
+        $result = [];
+
+        $filePath = $this->baseDirectory.'/'.$query.'.csv';
+        $file = fopen($filePath, 'r');
+        if ($file) {
+            while (($line = fgetcsv($file)) !== false) {
+                $result[] = $line;
+            }
+        }
+
+        fclose($file);
+        return $result;
     }
 
     public function fetchOne(string $query, array $context = []): null|array

@@ -41,7 +41,7 @@ final class ServiceLocator implements ContainerInterface {
         return new ($definition->fqn())(...$arguments);
     }
 
-    public function get(string $id): ?object
+    public function get(string $id)
     {
         if (\array_key_exists($id, $this->synthetic)) {
             return $this->synthetic[$id];
