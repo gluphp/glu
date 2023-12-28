@@ -14,7 +14,6 @@ use Glu\Event\Lifecycle\ResponseReadyEvent;
 use Glu\Event\Lifecycle\RouteMatchedEvent;
 use Glu\Event\Listener;
 use Glu\Extension\Extension;
-use Glu\Http\Factory;
 use Glu\Http\Request;
 use Glu\Http\Response;
 use Glu\Routing\Route;
@@ -23,10 +22,10 @@ use Glu\Templating\TemplateRenderer;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use function microtime;
 
 final class App implements AppInterface
 {
-    private readonly Factory $httpFactory;
     private ?Request $request;
 
     private readonly Router $router;
@@ -55,7 +54,7 @@ final class App implements AppInterface
         ?string $cacheDir = null
     )
     {
-        $this->startTime = \microtime(true);
+        $this->startTime = microtime(true);
         $this->request = null;
         $this->logger = $logger ?? new NullLogger();
         $this->router = new Router();
@@ -135,7 +134,7 @@ final class App implements AppInterface
         $matchResult = $routeMatchedEvent->matchResult();
 
         if ($matchResult->isFound() === false) {
-            return $this->httpFactory->createResponse(404);
+            return new Response(404);
         }
 
         // security layer
@@ -186,7 +185,7 @@ final class App implements AppInterface
             $response->contents = '';
         }
 
-        $this->endTime = \microtime(true);
+        $this->endTime = microtime(true);
 
         return $response;
     }
