@@ -192,6 +192,7 @@ final class App implements AppInterface
 
     public function send(Response $response): void
     {
+        http_response_code($response->statusCode());
         $headers = $response->headers();
         foreach ($headers as $headerName => $headerValue) {
             header($headerName . ': ' . $headerValue);
