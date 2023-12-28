@@ -134,7 +134,7 @@ final class App implements AppInterface
         $matchResult = $routeMatchedEvent->matchResult();
 
         if ($matchResult->isFound() === false) {
-            return new Response(404);
+            return new Response('', 404);
         }
 
         // security layer
