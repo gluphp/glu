@@ -265,4 +265,9 @@ final class App implements AppInterface
             }
         }
     }
+
+    public function addDefaultHeader(string $name, string $value): void
+    {
+        $this->defaultHeaders[\mb_strtolower($name)] = $value;
+    }
 }
