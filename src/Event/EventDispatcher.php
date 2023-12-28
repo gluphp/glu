@@ -19,23 +19,23 @@ final class EventDispatcher
         $this->locator = $locator;
         $this->listeners = [];
         foreach ($listeners as $listener) {
-            if (false === \array_key_exists($listener->event(), $this->listeners)) {
-                $this->listeners[$listener->event()] = [];
-            }
-
-            $this->listeners[$listener->event()][] = $listener;
+            $this->register($listener);
         }
     }
 
     public function register(Listener $listener): void
     {
-        $this->listeners[$listener->event()] = $listener;
+        if (false === \array_key_exists($listener->event(), $this->listeners)) {
+            $this->listeners[$listener->event()] = [];
+        }
+        $this->listeners[$listener->event()][] = $listener;
     }
 
     public function dispatch(Event $event): Event
     {
         $stop = false;
         foreach ($this->listeners[$event->name()] ?? [] as $listener) {
+            \var_dump('yes');
             if (\is_callable($listener->action())) {
                 $listener->action()($event, $stop);
             } else {

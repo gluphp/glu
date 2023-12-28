@@ -2,19 +2,17 @@
 
 namespace Glu\Http;
 
-use GuzzleHttp\Psr7\Response as Psr7Response;
-use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
 final class Response {
-
-    private ResponseInterface $psr7Response;
+    private SymfonyResponse $symfonyResponse;
 
     public function __construct(
         string $contents,
         int $status = 200,
         array $headers = [])
     {
-        $this->psr7Response = new Psr7Response($status, $headers, $contents);
+        $this->symfonyResponse = new SymfonyResponse($contents, $status, $headers);
     }
 
     public static function createRedirect(string $location, int $statusCode = 302)
@@ -24,51 +22,34 @@ final class Response {
         ]);
     }
 
-    public function psr7Response(): ResponseInterface
-    {
-        return $this->psr7Response;
-    }
-
     public function headers(): array
     {
-        return $this->psr7Response->getHeaders();
+        return $this->symfonyResponse->headers->all();
     }
 
     public function contents(): string
     {
-        return $this->psr7Response->getBody()->getContents();
+        return $this->symfonyResponse->getContent();
     }
 
     public function setContents(string $contents): void
     {
-        $this->psr7Response->getBody()->write($contents);
+        $this->symfonyResponse->setContent($contents);
     }
 
     public function statusCode(): int
     {
-        return $this->psr7Response->getStatusCode();
+        return $this->symfonyResponse->getStatusCode();
     }
 
     public function addHeader(string $name, string $value): void
     {
-        $this->psr7Response = $this->psr7Response->withHeader($name, $value);
+        $this->symfonyResponse->headers->set($name, $value);
     }
 
     public function __toString(): string
     {
-        $headers = '';
-        foreach ($this->psr7Response->getHeaders() as $name => $value) {
-            $headers .= $this->psr7Response->getHeaderLine($name)."\r\n";
-        }
-
-        return sprintf(
-            "HTTP/%s %d %s\r\n%s\r\n%s",
-            $this->psr7Response->getProtocolVersion(),
-            $this->statusCode(),
-            $this->psr7Response->getReasonPhrase(),
-            $headers,
-            $this->contents
-        );
+        return (string)$this->symfonyResponse;
     }
 
 
@@ -77,8 +58,10 @@ final class Response {
 
     }
 
-    public function replaceBody(string $contents): void
+    public function replace(array|string $pattern, array|string $replacement, int $limit = -1, &$count): void
     {
-        $this->psr7Response->getBody()->write($contents);
+        $this->symfonyResponse->setContent(
+            \preg_replace($pattern, $replacement, $this->symfonyResponse->getContent(), $limit, $count)
+        );
     }
 }
