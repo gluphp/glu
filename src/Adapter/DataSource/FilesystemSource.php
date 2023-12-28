@@ -23,7 +23,11 @@ final class FilesystemSource implements Source
             mkdir(directory: $this->baseDirectory, recursive: true);
         }
         $filePath = $this->baseDirectory.'/'.$table.'.csv';
+        $fileExists = \file_exists($filePath);
         $file = fopen($filePath, 'a+');
+        if ($fileExists === false) {
+            fputcsv($file, array_keys($data));
+        }
         fputcsv($file, $data);
         fclose($file);
     }
@@ -39,9 +43,19 @@ final class FilesystemSource implements Source
 
         $filePath = $this->baseDirectory.'/'.$query.'.csv';
         $file = fopen($filePath, 'r');
+        $keys = [];
         if ($file) {
+            $firstLine = true;
             while (($line = fgetcsv($file)) !== false) {
-                $result[] = $line;
+                if ($firstLine) {
+                    $keys = $line;
+                    $firstLine = false;
+                } else {
+                    $result[] = \array_combine(
+                        $keys,
+                        $line
+                    );
+                }
             }
         }
 

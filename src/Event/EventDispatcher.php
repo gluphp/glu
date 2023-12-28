@@ -2,19 +2,19 @@
 
 namespace Glu\Event;
 
-use Glu\DependencyInjection\ServiceLocator;
+use Glu\DependencyInjection\Container;
 
 final class EventDispatcher
 {
     /** @var array<string, Listener[]> */
     private array $listeners;
 
-    private ServiceLocator $locator;
+    private Container $locator;
 
     /**
      * @param Listener[] $listeners
      */
-    public function __construct(array $listeners, ServiceLocator $locator)
+    public function __construct(array $listeners, Container $locator)
     {
         $this->locator = $locator;
         $this->listeners = [];
@@ -27,7 +27,12 @@ final class EventDispatcher
         }
     }
 
-    public function dispatch(Event $event)
+    public function register(Listener $listener): void
+    {
+        $this->listeners[$listener->event()] = $listener;
+    }
+
+    public function dispatch(Event $event): Event
     {
         $stop = false;
         foreach ($this->listeners[$event->name()] ?? [] as $listener) {

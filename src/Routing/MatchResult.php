@@ -2,25 +2,47 @@
 
 namespace Glu\Routing;
 
-final class RouteMatch {
+final class MatchResult {
+
+    private bool $found;
+    private ?Route $route;
+    private array $parameters;
 
     public function __construct(
-        public readonly bool $found,
-        public readonly \Closure|string|null $controller = null,
-        public readonly ?array $parameters = [],
-        public readonly ?string $secured = null
-
+        bool   $found,
+        ?Route $route = null,
+        array  $parameters = []
     )
     {
+        $this->found = $found;
+        $this->route = $route;
+        $this->parameters = $parameters;
     }
 
-    public static function found(\Closure $controller, array $parameters = [], ?string $secured = null): self
+    public static function createFound(Route $route, array $parameters = []): self
     {
-        return new RouteMatch(true, $controller, $parameters, $secured);
+        return new self(true, $route, $parameters);
     }
 
-    public static function notFound(): self
+    public static function createNotFound(): self
     {
         return new self(false);
     }
+
+    public function isFound(): bool
+    {
+        return $this->found;
+    }
+
+    public function route(): ?Route
+    {
+        return $this->route;
+    }
+
+    public function parameters(): array
+    {
+        return $this->parameters;
+    }
+
+
 }

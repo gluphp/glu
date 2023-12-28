@@ -4,15 +4,15 @@ namespace Glu\DependencyInjection;
 
 use Psr\Container\ContainerInterface;
 
-final class ServiceLocator implements ContainerInterface {
+final class Container implements ContainerInterface {
 
     private array $parameters;
-    /** @var Service[] */
+    /** @var ServiceDefinition[] */
     private array $definitions;
     private array $synthetic;
 
     /**
-     * @param Service[] $services
+     * @param ServiceDefinition[] $services
      */
     public function __construct(array $definitions, array $parameters = [])
     {
@@ -24,7 +24,7 @@ final class ServiceLocator implements ContainerInterface {
         }
     }
 
-    private function instantiate(Service $definition) {
+    private function instantiate(ServiceDefinition $definition) {
         $arguments = [];
         foreach ($definition->arguments() as $argument) {
             if (\str_starts_with($argument, '@')) {
@@ -66,7 +66,7 @@ final class ServiceLocator implements ContainerInterface {
             ;
     }
 
-    public function add(Service $definition): void
+    public function add(ServiceDefinition $definition): void
     {
         $this->definitions[$definition->name()] = $definition;
     }

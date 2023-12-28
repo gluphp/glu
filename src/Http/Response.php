@@ -2,81 +2,60 @@
 
 namespace Glu\Http;
 
-final class IntermediateResponse {
+use GuzzleHttp\Psr7\Response as Psr7Response;
+use Psr\Http\Message\ResponseInterface;
 
-    private static $reasonPhrases = [
-        100 => 'Continue',
-        101 => 'Switching Protocols',
-        200 => 'OK',
-        201 => 'Created',
-        202 => 'Accepted',
-        203 => 'Non-Authoritative Information',
-        204 => 'No Content',
-        205 => 'Reset Content',
-        206 => 'Partial Content',
-        300 => 'Multiple Choices',
-        301 => 'Moved Permanently',
-        302 => 'Found',
-        303 => 'See Other',
-        304 => 'Not Modified',
-        305 => 'Use Proxy',
-        307 => 'Temporary Redirect',
-        400 => 'Bad Request',
-        401 => 'Unauthorized',
-        402 => 'Payment Required',
-        403 => 'Forbidden',
-        404 => 'Not Found',
-        405 => 'Method Not Allowed',
-        406 => 'Not Acceptable',
-        407 => 'Proxy Authentication Required',
-        408 => 'Request Time-out',
-        409 => 'Conflict',
-        410 => 'Gone',
-        411 => 'Length Required',
-        412 => 'Precondition Failed',
-        413 => 'Request Entity Too Large',
-        414 => 'Request-URI Too Large',
-        415 => 'Unsupported Media Type',
-        416 => 'Requested range not satisfiable',
-        417 => 'Expectation Failed',
-        500 => 'Internal Server Error',
-        501 => 'Not Implemented',
-        502 => 'Bad Gateway',
-        503 => 'Service Unavailable',
-        504 => 'Gateway Time-out',
-        505 => 'HTTP Version not supported',
-    ];
+final class Response {
+
+    private ResponseInterface $psr7Response;
 
     public function __construct(
         public string $contents,
-        public int $statusCode = 200,
+        public int $status = 200,
         public array $headers = [])
     {
+        $this->psr7Response = new Psr7Response($status, $headers, $this->contents);
     }
 
-    public static function redirect(string $location, int $statusCode = 302)
+    public static function createRedirect(string $location, int $statusCode = 302)
     {
         return new self('', $statusCode, [
             'location' => $location
         ]);
     }
 
+    public function headers(): array
+    {
+        return $this->psr7Response->getHeaders();
+    }
+
+    public function contents(): string
+    {
+        return $this->psr7Response->getBody()->getContents();
+    }
+
+    public function statusCode(): int
+    {
+        return $this->psr7Response->getStatusCode();
+    }
+
     public function addHeader(string $name, string $value): void
     {
-        $this->headers[$name] = $value;
+        $this->psr7Response = $this->psr7Response->withHeader($name, $value);
     }
 
     public function __toString(): string
     {
         $headers = '';
-        foreach ($this->headers as $name => $value) {
-            $headers .= $name .': '.$value."\r\n";
+        foreach ($this->psr7Response->getHeaders() as $name => $value) {
+            $headers .= $this->psr7Response->getHeaderLine($name)."\r\n";
         }
 
         return sprintf(
-            "HTTP/1.1 %d %s\r\n%s\r\n%s",
-            $this->statusCode,
-            self::$reasonPhrases[$this->statusCode],
+            "HTTP/%s %d %s\r\n%s\r\n%s",
+            $this->psr7Response->getProtocolVersion(),
+            $this->statusCode(),
+            $this->psr7Response->getReasonPhrase(),
             $headers,
             $this->contents
         );
@@ -88,8 +67,8 @@ final class IntermediateResponse {
 
     }
 
-    public function replaceBody(): void
+    public function replaceBody(string $contents): void
     {
-
+        $this->psr7Response->getBody()->write($contents);
     }
 }

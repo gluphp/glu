@@ -48,11 +48,11 @@ final class Router {
         }
     }
 
-    public function match(Request $request): RouteMatch {
+    public function match(Request $request): MatchResult {
         $parameters = [];
         $route = null;
-        foreach ($this->routes[$request->method] ?? [] as $path => $routeInfo) {
-            if (0 !== \preg_match('#^'.$path.'$#', $request->path, $m)) {
+        foreach ($this->routes[$request->method()] ?? [] as $path => $routeInfo) {
+            if (0 !== \preg_match('#^'.$path.'$#', $request->path(), $m)) {
                 foreach ($routeInfo['parameters'] as $definedParameter) {
                     $parameters[$definedParameter] = $m[$definedParameter];
                 }
@@ -61,10 +61,10 @@ final class Router {
         }
 
         if ($route === null) {
-            return new RouteMatch(false);
+            return MatchResult::createNotFound();
         }
 
-        return new RouteMatch(true, $route['controller'], $parameters, $route['secured']);
+        return MatchResult::createFound($route, $parameters);
     }
 
     public function generate(string $name, array $parameters): string

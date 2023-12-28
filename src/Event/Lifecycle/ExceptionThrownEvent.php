@@ -2,39 +2,30 @@
 
 namespace Glu\Event\Lifecycle;
 
-use Glu\Event\Event;
 use Glu\Http\Request;
 use Glu\Http\Response;
 
-final class ExceptionThrownEvent implements Event
+final class ExceptionThrownEvent extends BaseLifecycleEvent
 {
-    private Request $request;
-    private ?Response $response;
+    private \Throwable $exception;
 
     public function __construct(
-        Request $request
+        Request $request,
+        ?Response $response,
+        \Throwable $exception
     ) {
         $this->request = $request;
-        $this->response = null;
+        $this->response = $response;
+        $this->exception = $exception;
     }
 
     public function name(): string
     {
-        return 'life.exception_thrown';
+        return 'glu.exception_thrown';
     }
 
-    public function request(): Request
+    public function exception(): \Throwable
     {
-        return $this->request;
-    }
-
-    public function response(): ?Response
-    {
-        return $this->response;
-    }
-
-    public function setResponse(Response $response): void
-    {
-        $this->response = $response;
+        return $this->exception;
     }
 }

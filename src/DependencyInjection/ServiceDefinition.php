@@ -2,7 +2,7 @@
 
 namespace Glu\DependencyInjection;
 
-final class Service
+final class ServiceDefinition
 {
     private string $name;
     private string $fqn;

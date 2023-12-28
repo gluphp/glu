@@ -1,19 +1,15 @@
 <?php
 
-namespace Glu;
+namespace Glu\Cache;
 
-use Psr\Cache\CacheItemInterface;
-use Psr\Cache\CacheItemPoolInterface;
-use Psr\Cache\InvalidArgumentException;
 use Glu\Http\Request;
-use Glu\Http\Response;
 
-class CacheKeyCalculator
+final class CacheKeyCalculator implements KeyCalculator
 {
     public function key(Request $request): string
     {
         return md5(
-            $request->method.
+            $request->method().
             $request->path()
         );
     }

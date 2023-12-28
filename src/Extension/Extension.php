@@ -3,13 +3,14 @@
 namespace Glu\Extension;
 
 use Glu\DataSource\Source;
-use Glu\DependencyInjection\ServiceLocator;
+use Glu\DependencyInjection\Container;
 use Glu\Routing\Route;
 use Glu\Templating\_Function;
+use Glu\Templating\TemplateRenderer;
 
 interface Extension
 {
-    public static function load(ServiceLocator $locator, array $context): static;
+    public static function load(Container $locator, array $context): static;
 
     public function name(): string;
 
@@ -23,4 +24,7 @@ interface Extension
     public function listeners(): array;
     /* @return _Function[] */
     public function rendererFunctions(): array;
+
+    /** @return TemplateRenderer[] */
+    public function templateRenderers(): array;
 }

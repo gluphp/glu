@@ -7,7 +7,7 @@ use Glu\Http\Response;
 
 interface AppInterface
 {
-    public function handle(Request $request, bool $send = true): ?Response;
+    public function handle(Request $request): Response;
 
     public function send(Response $response): void;
 

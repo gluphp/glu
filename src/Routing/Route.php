@@ -4,20 +4,28 @@ namespace Glu\Routing;
 
 final class Route
 {
+    private string $name;
     /** @var string[]  */
     private array $methods;
+    private string $path;
+    private \Closure $controller;
 
     public function __construct(
-        private readonly string $name,
+        string $name,
         string|array $methods,
-        private readonly string $path,
-        private readonly \Closure $controller
+        string $path,
+        \Closure $controller
     )
     {
+        $this->name = $name;
+
         if (\is_string($methods)) {
             $methods = [$methods];
         }
         $this->methods = $methods;
+
+        $this->path = $path;
+        $this->controller = $controller;
     }
 
     public function name(): string

@@ -3,43 +3,26 @@
 namespace Glu\Event\Lifecycle;
 
 use Glu\Event\Event;
+use Glu\Event\LifecycleEvent;
 use Glu\Http\Request;
 use Glu\Http\Response;
+use Psr\Http\Message\RequestInterface;
 
-final class RequestReceivedEvent implements Event
+final class RequestReceivedEvent extends BaseLifecycleEvent
 {
-    private Request $request;
-    private ?Response $response;
-
     public function __construct(
         Request $request
     ) {
         $this->request = $request;
-        $this->response = null;
     }
 
     public function name(): string
     {
-        return 'life.request_received';
+        return 'glu.request_received';
     }
 
-    public function request(): Request
-    {
-        return $this->request;
-    }
-
-    public function response(): ?Response
-    {
-        return $this->response;
-    }
-
-    public function replaceRequest(Request $request): void
+    public function setRequest(Request $request): void
     {
         $this->request = $request;
-    }
-
-    public function setResponse(Response $response): void
-    {
-        $this->response = $response;
     }
 }

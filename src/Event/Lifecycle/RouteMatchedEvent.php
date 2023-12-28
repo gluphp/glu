@@ -3,43 +3,34 @@
 namespace Glu\Event\Lifecycle;
 
 use Glu\Event\Event;
+use Glu\Event\LifecycleEvent;
 use Glu\Http\Request;
 use Glu\Http\Response;
+use Glu\Routing\MatchResult;
 
-final class RouteMatchedEvent implements Event
+final class RouteMatchedEvent extends BaseLifecycleEvent
 {
-    private Request $request;
-    private ?Response $response;
+    private MatchResult $matchResult;
 
     public function __construct(
-        Request $request
+        Request $request,
+        MatchResult $matchResult
     ) {
         $this->request = $request;
-        $this->response = null;
+        $this->matchResult = $matchResult;
     }
 
     public function name(): string
     {
-        return 'life.route_matched';
+        return 'glu.route_matched';
     }
 
-    public function request(): Request
+    public function matchResult(): MatchResult
     {
-        return $this->request;
+        return $this->matchResult;
     }
 
-    public function response(): ?Response
-    {
-        return $this->response;
-    }
-
-    public function replaceRequest(Request $request): void
-    {
-        $this->request = $request;
-    }
-
-    public function setResponse(Response $response): void
-    {
-        $this->response = $response;
+    public function setMatchResult(MatchResult $matchResult) {
+        $this->matchResult = $matchResult;
     }
 }

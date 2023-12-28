@@ -2,8 +2,16 @@
     "name": "glu/glu",
     "autoload": {
         "psr-4": {
-            "Glu\\": "src/"
-        },
+            "Glu\\": "src/",
+			"Glu\\Extension\\ContactForm\\": "lib/Glu/Extension/ContactForm/src/",
+			"Glu\\Extension\\Cookiebot\\": "lib/Glu/Extension/Cookiebot/src/",
+			"Glu\\Extension\\GoogleAdsense\\": "lib/Glu/Extension/GoogleAdsense/src/",
+			"Glu\\Extension\\GoogleAnalytics\\": "lib/Glu/Extension/GoogleAnalytics/src/",
+			"Glu\\Extension\\PrivacyPolicy\\": "lib/Glu/Extension/PrivacyPolicy/src/",
+			"Glu\\Extension\\Twig\\": "lib/Glu/Extension/Twig/src/",
+			"Glu\\Extension\\User\\": "lib/Glu/Extension/User/src/",
+			"Glu\\Extension\\Web\\": "lib/Glu/Extension/Web/src/"
+		},
 	  "files": [
 		"src/functions.php"
 	  ]
@@ -29,7 +37,10 @@
         "psr/log": "^3.0",
         "paragonie/constant_time_encoding": "^2.6",
         "psr/cache": "^3.0",
-        "symfony/cache": "^6.3"
+        "symfony/cache": "^6.3",
+        "guzzlehttp/psr7": "^2.6",
+        "psr/event-dispatcher": "^1.0",
+        "psr/http-factory": "^1.0"
     }
 
 }

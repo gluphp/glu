@@ -2,23 +2,11 @@
 
 namespace Glu;
 
-use Psr\Cache\CacheItemPoolInterface;
-use Psr\Log\LoggerInterface;
-use Psr\Log\NullLogger;
-use Symfony\Component\Cache\Adapter\FilesystemAdapter;
-use Glu\Adapter\DataSource\DbalSource;
-use Glu\Adapter\Templating\TwigTemplateRenderer;
-use Glu\DataSource\Source;
-use Glu\DependencyInjection\Service;
-use Glu\DependencyInjection\ServiceLocator;
-use Glu\Event\EventDispatcher;
-use Glu\Event\Listener;
-use Glu\Event\ResponseEvent;
-use Glu\Extension\Extension;
+use Glu\Cache\CacheKeyCalculator;
 use Glu\Http\Request;
 use Glu\Http\Response;
-use Glu\Routing\Router;
-use Glu\Templating\TemplateRenderer;
+use Psr\Cache\CacheItemPoolInterface;
+use Symfony\Component\Cache\Adapter\FilesystemAdapter;
 
 final class CacheableApp implements AppInterface
 {
@@ -64,12 +52,7 @@ final class CacheableApp implements AppInterface
 
     public function get(string $path, callable $callback, ?string $name = null): void
     {
-        $this->addPath('GET', $path, $callback, $name);
-    }
-
-    public function getStatic(string $path, string $callback, ?string $name = null): void
-    {
-        $this->addPath('GET', $path, $callback, $name);
+        $this->app->addPath('GET', $path, $callback, $name);
     }
 
     public function addPath(

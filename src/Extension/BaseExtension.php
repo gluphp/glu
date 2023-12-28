@@ -2,6 +2,8 @@
 
 namespace Glu\Extension;
 
+use Glu\Templating\TemplateRenderer;
+
 abstract class BaseExtension implements Extension
 {
     public function templateDirectories(): array
@@ -26,6 +28,11 @@ abstract class BaseExtension implements Extension
     }
 
     public function rendererFunctions(): array
+    {
+        return [];
+    }
+
+    public function templateRenderers(): array
     {
         return [];
     }

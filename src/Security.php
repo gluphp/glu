@@ -2,7 +2,7 @@
 
 namespace Glu;
 
-use Glu\Extension\User\LoggedInUser;
+use User\LoggedInUser;
 
 final class Security
 {

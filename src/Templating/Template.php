@@ -3,14 +3,22 @@
 namespace Glu\Templating;
 
 final class Template {
-    public readonly string $path;
-    public readonly array $variables;
-    public readonly array $headers;
+    private readonly string $path;
+    private readonly array $context;
 
-    public function __construct(string $path, array $variables = [], array $headers = [])
+    public function __construct(string $path, array $context = [])
     {
         $this->path = $path;
-        $this->variables = $variables;
-        $this->headers = $headers;
+        $this->context = $context;
+    }
+
+    public function path(): string
+    {
+        return $this->path;
+    }
+
+    public function context(): array
+    {
+        return $this->context;
     }
 }
