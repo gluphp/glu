@@ -81,6 +81,6 @@ final class Request {
 
     public function method(): string
     {
-        return $this->psr7Request->getMethod();
+        return \mb_strtolower($this->psr7Request->getMethod());
     }
 }

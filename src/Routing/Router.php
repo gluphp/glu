@@ -5,6 +5,7 @@ namespace Glu\Routing;
 use Glu\Http\Request;
 
 final class Router {
+    /** @var array<string, CompiledRoute[]> */
     private array $routes = [];
 
     public function add(Route $route) {
@@ -24,31 +25,32 @@ final class Router {
                 $this->routes[$method] = [];
             }
 
-            $this->routes[$method][$pathRegex] = $route;
+            $compiledRoute = new CompiledRoute($route, $pathRegex, $parameters);
+            $this->routes[$method][] = $compiledRoute;
 
             if ($method === 'get') {
-                $this->routes['head'][$pathRegex] = $route;
+                $this->routes['head'][] = $compiledRoute;
             }
         }
     }
 
     public function match(Request $request): MatchResult {
         $parameters = [];
-        $route = null;
-        foreach ($this->routes[$request->method()] ?? [] as $path => $routeInfo) {
-            if (0 !== \preg_match('#^'.$path.'$#', $request->path(), $m)) {
-                foreach ($routeInfo['parameters'] as $definedParameter) {
+        $match = null;
+        foreach ($this->routes[$request->method()] ?? [] as $route) {
+            if (0 !== \preg_match('#^'.$route->regex().'$#', $request->path(), $m)) {
+                foreach ($route->parameters() as $definedParameter) {
                     $parameters[$definedParameter] = $m[$definedParameter];
                 }
-                $route = $routeInfo;
+                $match = $route;
             }
         }
 
-        if ($route === null) {
+        if ($match === null) {
             return MatchResult::createNotFound();
         }
 
-        return MatchResult::createFound($route, $parameters);
+        return MatchResult::createFound($match->route(), $parameters);
     }
 
     public function generate(string $name, array $parameters): string
