@@ -20,6 +20,7 @@ use Glu\Routing\Route;
 use Glu\Routing\Router;
 use Glu\Templating\Renderer;
 use Glu\Templating\Engine;
+use Glu\Templating\RendererFactory;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -95,7 +96,7 @@ final class App implements AppInterface
 
         $this->container->set(new ServiceDefinition(
             'glu.templating.renderer',
-            Renderer::class,
+            RendererFactory::class,
             [
                 'glu.templating.engines'
             ],
@@ -254,6 +255,10 @@ final class App implements AppInterface
     }
 
     private function loadExtensions(array $extensions): void {
+        $templatingEngines = $this->container->get('glu.templating.engines');
+        $templatingDirectories = $this->container->get('glu.templating.directories');
+        $templatingFunctions = $this->container->get('glu.templating.functions');
+
         foreach ($extensions as $extensionFqn => $extensionContext) {
             /** @var Extension $extension */
             $extension = $extensionFqn::load($this->container, $extensionContext);
@@ -261,9 +266,7 @@ final class App implements AppInterface
             foreach ($extension->services() as $service) {
                 $this->container->set($service);
                 if (\in_array('glu.template_engine', $service->tags())) {
-                    $this->engineResolver->registerEngine(
-                        $this->container->get($service->name())
-                    );
+                    $templatingEngines[] = $service->name();
                 }
             }
 
@@ -272,10 +275,10 @@ final class App implements AppInterface
             }
 
             foreach ($extension->templateDirectories() as $templateDirectory) {
-                $this->engineResolver->registerDirectory($templateDirectory);
+                $templatingDirectories[] = $templateDirectory;
             }
             foreach ($extension->rendererFunctions() as $_function) {
-                $this->engineResolver->registerFunction($_function);
+                $templatingFunctions[] = $_function;
             }
             foreach ($extension->dataSources() as $name => $dsn) {
                 // make it lazy
@@ -285,6 +288,10 @@ final class App implements AppInterface
                 $this->router->add($route);
             }
         }
+
+        $this->container->setParameter('glu.templating.engines', $templatingEngines);
+        $this->container->setParameter('glu.templating.directories', $templatingDirectories);
+        $this->container->setParameter('glu.templating.functions', $templatingFunctions);
     }
 
     public function addDefaultHeader(string $name, string $value): void

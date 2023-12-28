@@ -16,7 +16,7 @@ final class RendererFactory {
         $this->engineNames = [];
     }
 
-    public function create(array $ids) {
+    public static function create(array $ids) {
         return new Renderer(\array_map(function(string $serviceId) {
             return $this->container->get($serviceId);
         }, $ids));
