@@ -10,10 +10,10 @@ use Glu\Routing\MatchResult;
 
 abstract class BaseLifecycleEvent implements LifecycleEvent
 {
-    private Request $request;
-    private ?Response $response;
-    private bool $stopPropagation = false;
-    private bool $responseSet = false;
+    protected Request $request;
+    protected ?Response $response;
+    protected bool $stopPropagation = false;
+    protected bool $responseSet = false;
 
     public function request(): Request
     {
