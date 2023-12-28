@@ -46,5 +46,7 @@ final class EventDispatcher
                 break;
             }
         }
+
+        return $event;
     }
 }
