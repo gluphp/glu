@@ -1,6 +1,6 @@
 <?php
 
-namespace Glu\Extension\PrivacyPolicy\src;
+namespace Glu\Extension\PrivacyPolicy;
 
 use Glu\DependencyInjection\Container;
 use Glu\Extension\BaseExtension;

@@ -1,6 +1,6 @@
 <?php
 
-namespace Glu\Extension\User\src;
+namespace Glu\Extension\User;
 
 final class LoggedInUser
 {

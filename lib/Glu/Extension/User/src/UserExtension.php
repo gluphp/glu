@@ -1,6 +1,6 @@
 <?php
 
-namespace Glu\Extension\User\src;
+namespace Glu\Extension\User;
 
 use Glu\App;
 use Glu\DataSource\Source;

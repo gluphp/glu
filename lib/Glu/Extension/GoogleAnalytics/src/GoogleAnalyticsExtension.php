@@ -1,6 +1,6 @@
 <?php
 
-namespace Glu\Extension\GoogleAnalytics\src;
+namespace Glu\Extension\GoogleAnalytics;
 
 use Glu\DependencyInjection\Container;
 use Glu\Event\Lifecycle\ResponseReadyEvent;
