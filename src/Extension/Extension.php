@@ -4,6 +4,7 @@ namespace Glu\Extension;
 
 use Glu\DataSource\Source;
 use Glu\DependencyInjection\Container;
+use Glu\DependencyInjection\ServiceDefinition;
 use Glu\Routing\Route;
 use Glu\Templating\_Function;
 use Glu\Templating\TemplateRenderer;
@@ -19,6 +20,7 @@ interface Extension
     public function routes(): array;
     /* @return Source[] */
     public function dataSources(): array;
+    /** @return ServiceDefinition[] */
     public function services(): array;
 
     public function listeners(): array;

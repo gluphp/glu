@@ -58,10 +58,12 @@ final class Response {
 
     }
 
-    public function replace(array|string $pattern, array|string $replacement, int $limit = -1, &$count): void
+    public function replace(array|string $pattern, array|string $replacement, int $limit = -1): int
     {
+        $count = 0;
         $this->symfonyResponse->setContent(
             \preg_replace($pattern, $replacement, $this->symfonyResponse->getContent(), $limit, $count)
         );
+        return $count;
     }
 }

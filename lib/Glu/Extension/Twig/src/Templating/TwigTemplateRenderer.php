@@ -1,6 +1,6 @@
 <?php declare(strict_types = 1);
 
-namespace Glu\Adapter\Templating;
+namespace Glu\Extension\Twig\Templating;
 
 use Glu\Environment;
 use Glu\Http\Request;
@@ -102,5 +102,10 @@ final class TwigTemplateRenderer implements TemplateRenderer {
     public function registerDirectory(string $directory): void
     {
         $this->directories[] = $directory;
+    }
+
+    public function supports(string $path): bool
+    {
+        return \substr($path, -5) === '.twig';
     }
 }

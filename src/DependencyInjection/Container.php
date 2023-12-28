@@ -66,13 +66,18 @@ final class Container implements ContainerInterface {
             ;
     }
 
-    public function add(ServiceDefinition $definition): void
+    public function set(ServiceDefinition $definition): void
     {
         $this->definitions[$definition->name()] = $definition;
     }
 
-    public function addSynthetic(string $name, $service): void
+    public function setSynthetic(string $name, $service): void
     {
         $this->synthetic[$name] = $service;
+    }
+
+    public function setParameter(string $name, $value): void
+    {
+        $this->parameters[$name] = $value;
     }
 }

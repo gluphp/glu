@@ -7,6 +7,7 @@ final class ServiceDefinition
     private string $name;
     private string $fqn;
     private array $arguments;
+    private array $tags;
     private bool $isFactory;
     private ?string $factoryMethod;
 
@@ -14,6 +15,7 @@ final class ServiceDefinition
         string $name,
         string $fqn,
         array $arguments = [],
+        array $tags = [],
         bool $isFactory = false,
         ?string $factoryMethod = null
     )
@@ -21,6 +23,7 @@ final class ServiceDefinition
         $this->name = $name;
         $this->fqn = $fqn;
         $this->arguments = $arguments;
+        $this->tags = $tags;
         $this->isFactory = $isFactory;
         $this->factoryMethod = $factoryMethod;
     }
@@ -38,6 +41,11 @@ final class ServiceDefinition
     public function arguments(): array
     {
         return $this->arguments;
+    }
+
+    public function tags(): array
+    {
+        return $this->tags;
     }
 
     public function isFactory(): bool

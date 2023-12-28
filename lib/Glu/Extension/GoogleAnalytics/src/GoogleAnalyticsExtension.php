@@ -43,15 +43,13 @@ final class GoogleAnalyticsExtension extends BaseExtension
     {
         return [
             new Listener('glu.response_ready', function(ResponseReadyEvent $event) {
-                $event->response()->contents =
-                    preg_replace(
-                        '#</head>#',
-                        $this->renderer->render('code.html.twig', $event->request(), [
-                            'id' => $this->id
-                        ]) . '</head>',
-                        $event->response()->contents,
-                        1
-                    );
+                $event->response()->replace(
+                    '#</head>#',
+                    $this->renderer->render('code.html.twig', $event->request(), [
+                        'id' => $this->id
+                    ]) . '</head>',
+                    1
+                );
             })
         ];
     }

@@ -35,7 +35,6 @@ final class EventDispatcher
     {
         $stop = false;
         foreach ($this->listeners[$event->name()] ?? [] as $listener) {
-            \var_dump('yes');
             if (\is_callable($listener->action())) {
                 $listener->action()($event, $stop);
             } else {

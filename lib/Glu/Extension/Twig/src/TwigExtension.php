@@ -23,4 +23,22 @@ final class TwigExtension extends BaseExtension
     {
         return 'dev.glu.twig';
     }
+
+    public function services(): array
+    {
+        return [
+            new \Glu\DependencyInjection\ServiceDefinition(
+                '',
+                \Glu\Extension\Twig\Templating\TwigTemplateRenderer::class,
+                [
+                    'glu.templating_directories',
+                    'glu.router',
+                    'glu.cache_dir'
+                ],
+                ['glu.templating_engine']
+            )
+        ];
+    }
+
+
 }

@@ -3,47 +3,44 @@
 namespace Glu;
 
 final class Environment {
-    private static bool $loaded = false;
-    private static array $values;
+    private bool $loaded = false;
+    private array $values;
 
-    public static function load()
+    public function __construct(string $directory)
     {
-        self::$values = [
+        $this->values = [
             'globals' => []
         ];
 
-        $env = \parse_ini_file(__DIR__ . '/../../../../.env', true, \INI_SCANNER_RAW);
+        $env = \parse_ini_file($directory . '/.env', true, \INI_SCANNER_RAW);
 
-        if (false === self::$loaded) {
+        if (false === $this->loaded) {
             foreach ($env as $sectionName => $sectionItems) {
-                self::$values[$sectionName] = [];
+                $this->values[$sectionName] = [];
                 foreach ($sectionItems as $key => $value) {
                     if ($value === 'false') {
-                        self::$values[$sectionName][$key] = false;
+                        $this->values[$sectionName][$key] = false;
                     } elseif ($value === 'true') {
-                        self::$values[$sectionName][$key] = true;
+                        $this->values[$sectionName][$key] = true;
                     } elseif (\is_numeric($value)) {
-                        self::$values[$sectionName][$key] = \intval($value);
+                        $this->values[$sectionName][$key] = \intval($value);
                     } else {
-                        self::$values[$sectionName][$key] = $value;
+                        $this->values[$sectionName][$key] = $value;
                     }
 
                 }
             }
 
-            self::$loaded = true;
+            $this->loaded = true;
         }
     }
-    public static function get(string $section, string $id)
+    public function get(string $section, string $id)
     {
-        self::load();
-
-        return self::$values[$section][$id] ?? null;
+        return $this->values[$section][$id] ?? null;
     }
 
-    public static function all(string $section): array
+    public function all(string $section): array
     {
-        self::load();
-        return self::$values[$section] ?? [];
+        return $this->values[$section] ?? [];
     }
 }

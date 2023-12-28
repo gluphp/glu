@@ -3,7 +3,6 @@
 namespace Glu;
 
 use Glu\Adapter\DataSource\DbalSource;
-use Glu\Adapter\Templating\TwigTemplateRenderer;
 use Glu\DependencyInjection\Container;
 use Glu\DependencyInjection\ServiceDefinition;
 use Glu\Event\EventDispatcher;
@@ -14,10 +13,12 @@ use Glu\Event\Lifecycle\ResponseReadyEvent;
 use Glu\Event\Lifecycle\RouteMatchedEvent;
 use Glu\Event\Listener;
 use Glu\Extension\Extension;
+use Glu\Extension\Twig\Templating\TwigTemplateRenderer;
 use Glu\Http\Request;
 use Glu\Http\Response;
 use Glu\Routing\Route;
 use Glu\Routing\Router;
+use Glu\Templating\EngineResolver;
 use Glu\Templating\TemplateRenderer;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
@@ -29,7 +30,7 @@ final class App implements AppInterface
     private ?Request $request;
 
     private readonly Router $router;
-    private readonly TemplateRenderer $templateRenderer;
+    private readonly EngineResolver $engineResolver;
     private array $defaultHeaders;
     private Container $container;
 
@@ -44,6 +45,7 @@ final class App implements AppInterface
     private float $endTime;
 
     public function __construct(
+        string $appDir,
         array          $sources = [],
         array          $services = [],
         /** @var Extension[] $extensions */
@@ -51,16 +53,18 @@ final class App implements AppInterface
         array $listeners = [],
         ?LoggerInterface $logger = null,
         string $templatesDir = __DIR__ . '/../../../../template',
-        ?string $cacheDir = null
     )
     {
         $this->startTime = microtime(true);
+
+        $environment = new Environment($appDir);
+
         $this->request = null;
         $this->logger = $logger ?? new NullLogger();
         $this->router = new Router();
 
         $this->container = new Container($services, [
-            'data_directory' => __DIR__ . '/../../../../var/data/'
+            'data_directory' => $appDir . '/var/data/'
         ]);
 
         $this->defaultHeaders = [
@@ -69,10 +73,11 @@ final class App implements AppInterface
         ];
 
         foreach ($sources as $name => $dsn) {
-            $this->container->add(new ServiceDefinition(
+            $this->container->set(new ServiceDefinition(
                 'source_' . $name,
                 DbalSource::class,
                 [$dsn],
+                [],
                 true,
                 'create'
             ));
@@ -82,13 +87,13 @@ final class App implements AppInterface
             $templatesDir
         ];
 
-        $this->templateRenderer = new TwigTemplateRenderer(
+        /*$this->engineResolver = new TwigTemplateRenderer(
             $templatesDirs,
             $this->router,
-            $cacheDir
-        );
+            $appDir . '/var/cache/' . $environment->get('global', 'env')
+        );*/
 
-        $this->container->addSynthetic('template_renderer', $this->templateRenderer);
+        $this->container->setSynthetic('glu.router', $this->router);
 
         // event dispatcher
         $my = [];
@@ -194,7 +199,7 @@ final class App implements AppInterface
         http_response_code($response->statusCode());
         $headers = $response->headers();
         foreach ($headers as $headerName => $headerValue) {
-            header($headerName . ': ' . $response->psr7Response()->getHeaderLine($headerName));
+            header($headerName . ': ' . implode(', ', $headerValue));
         }
         echo $response->contents();
     }
@@ -224,15 +229,18 @@ final class App implements AppInterface
     public function addRedirect(string $from, string $to, int $code = 302) {
         $this->router->add(
             new Route('redirect_', 'get', $from, function () use ($to, $code) {
-            return new Response('', $code, [
-                'location' => $to
-            ]);
-        }));
+                return new Response('', $code, [
+                    'location' => $to
+                ]);
+            }));
     }
 
     public function render(string $path, array $context = []): string
     {
-        return $this->templateRenderer->render($path, $this->request, $context);
+        /** @var EngineResolver $renderer */
+        $renderer = $this->container->get('glu.templating.resolver');
+        return $renderer->resolve($path)->render($path, $this->request, $context);
+        return $this->engineResolver->render($path, $this->request, $context);
     }
 
     private function loadExtensions(array $extensions): void {
@@ -240,15 +248,24 @@ final class App implements AppInterface
             /** @var Extension $extension */
             $extension = $extensionFqn::load($this->container, $extensionContext);
 
+            foreach ($extension->services() as $service) {
+                $this->container->set($service);
+                if (\in_array('glu.template_engine', $service->tags())) {
+                    $this->engineResolver->registerEngine(
+                        $this->container->get($service->name())
+                    );
+                }
+            }
+
             foreach ($extension->listeners() as $listener) {
                 $this->eventDispatcher->register($listener);
             }
 
             foreach ($extension->templateDirectories() as $templateDirectory) {
-                $this->templateRenderer->registerDirectory($templateDirectory);
+                $this->engineResolver->registerDirectory($templateDirectory);
             }
             foreach ($extension->rendererFunctions() as $_function) {
-                $this->templateRenderer->registerFunction($_function);
+                $this->engineResolver->registerFunction($_function);
             }
             foreach ($extension->dataSources() as $name => $dsn) {
                 // make it lazy
