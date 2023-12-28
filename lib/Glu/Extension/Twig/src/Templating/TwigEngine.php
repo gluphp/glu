@@ -7,12 +7,12 @@ use Glu\Http\Request;
 use Glu\Routing\Router;
 use Glu\SessionManagement;
 use Glu\Templating\_Function;
-use Glu\Templating\TemplateRenderer;
+use Glu\Templating\Engine;
 use Twig\Environment as TwigEnvironment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
-final class TwigTemplateRenderer implements TemplateRenderer {
+final class TwigEngine implements Engine {
     private bool $initialized;
     /** @var string[] */
     private array $directories;

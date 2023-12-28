@@ -2,7 +2,7 @@
 
 namespace Glu\Extension;
 
-use Glu\Templating\TemplateRenderer;
+use Glu\Templating\Engine;
 
 abstract class BaseExtension implements Extension
 {

@@ -1,5 +1,6 @@
-<?php
+<?php declare(strict_types = 1);
 
+namespace Glu\Extension\Twig;
 
 use Glu\DependencyInjection\Container;
 use Glu\Extension\BaseExtension;
@@ -29,7 +30,7 @@ final class TwigExtension extends BaseExtension
         return [
             new \Glu\DependencyInjection\ServiceDefinition(
                 '',
-                \Glu\Extension\Twig\Templating\TwigTemplateRenderer::class,
+                \Glu\Extension\Twig\Templating\TwigEngine::class,
                 [
                     'glu.templating_directories',
                     'glu.router',

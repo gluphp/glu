@@ -3,30 +3,15 @@
 namespace Glu\Templating;
 
 use Glu\DependencyInjection\Container;
+use Glu\Http\Request;
 
-final class EngineResolver {
-    private Container $container;
-    private bool $initialized;
-    /** @var string[] */
-    private array $engineNames;
-    /** @var TemplateRenderer[] */
+final class Renderer {
+    /** @var Engine[] */
     private array $engines;
 
-    public function __construct(TemplateRenderer ...$renderers)
+    public function __construct(array $engines)
     {
         $this->engines = [];
-        $this->initialized = false;
-    }
-
-    private function initialize() {
-        if ($this->initialized) {
-            return;
-        }
-
-        foreach ($this->engineNames as $name) {
-            $this->engines[] = $this->container->get($name);
-        }
-        $this->initialized = true;
     }
 
     public function registerEngine(string $serviceId)
@@ -56,7 +41,7 @@ final class EngineResolver {
         );
     }
 
-    public function resolve(string $path): TemplateRenderer {
+    public function resolve(string $path): Engine {
         $this->initialize();
 
         foreach ($this->engines as $renderer) {
@@ -66,5 +51,9 @@ final class EngineResolver {
         }
 
         throw new UnsupportedTemplateException();
+    }
+
+    public function render(string $path, Request $request, array $context = []): string {
+        return $this->resolve($path)->render($path, $request, $context);
     }
 }

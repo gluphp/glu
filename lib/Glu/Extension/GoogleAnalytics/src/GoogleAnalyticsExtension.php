@@ -6,16 +6,17 @@ use Glu\DependencyInjection\Container;
 use Glu\Event\Lifecycle\ResponseReadyEvent;
 use Glu\Event\Listener;
 use Glu\Extension\BaseExtension;
-use Glu\Templating\TemplateRenderer;
+use Glu\Templating\Engine;
+use Glu\Templating\Renderer;
 
 final class GoogleAnalyticsExtension extends BaseExtension
 {
     private string $id;
-    private TemplateRenderer $renderer;
+    private Renderer $renderer;
 
     public function __construct(
         string $id,
-        TemplateRenderer $renderer
+        Renderer $renderer
     )
     {
         $this->id = $id;
@@ -24,7 +25,7 @@ final class GoogleAnalyticsExtension extends BaseExtension
 
     public static function load(Container $locator, array $context): static
     {
-        return new self($context['id'], $locator->get('template_renderer'));
+        return new self($context['id'], $locator->get('glu.templating.renderer'));
     }
 
     public function name(): string

@@ -13,13 +13,13 @@ use Glu\Event\Lifecycle\ResponseReadyEvent;
 use Glu\Event\Lifecycle\RouteMatchedEvent;
 use Glu\Event\Listener;
 use Glu\Extension\Extension;
-use Glu\Extension\Twig\Templating\TwigTemplateRenderer;
+use Glu\Extension\Twig\Templating\TwigEngine;
 use Glu\Http\Request;
 use Glu\Http\Response;
 use Glu\Routing\Route;
 use Glu\Routing\Router;
-use Glu\Templating\EngineResolver;
-use Glu\Templating\TemplateRenderer;
+use Glu\Templating\Renderer;
+use Glu\Templating\Engine;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
@@ -30,7 +30,7 @@ final class App implements AppInterface
     private ?Request $request;
 
     private readonly Router $router;
-    private readonly EngineResolver $engineResolver;
+    private readonly Renderer $engineResolver;
     private array $defaultHeaders;
     private Container $container;
 
@@ -93,6 +93,16 @@ final class App implements AppInterface
             $appDir . '/var/cache/' . $environment->get('global', 'env')
         );*/
 
+        $this->container->set(new ServiceDefinition(
+            'glu.templating.renderer',
+            Renderer::class,
+            [
+                'glu.templating.engines'
+            ],
+            [],
+            true,
+            'create'
+        ));
         $this->container->setSynthetic('glu.router', $this->router);
 
         // event dispatcher
@@ -237,8 +247,8 @@ final class App implements AppInterface
 
     public function render(string $path, array $context = []): string
     {
-        /** @var EngineResolver $renderer */
-        $renderer = $this->container->get('glu.templating.resolver');
+        /** @var Renderer $renderer */
+        $renderer = $this->container->get('glu.templating.renderer');
         return $renderer->resolve($path)->render($path, $this->request, $context);
         return $this->engineResolver->render($path, $this->request, $context);
     }

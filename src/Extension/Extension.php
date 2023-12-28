@@ -7,7 +7,7 @@ use Glu\DependencyInjection\Container;
 use Glu\DependencyInjection\ServiceDefinition;
 use Glu\Routing\Route;
 use Glu\Templating\_Function;
-use Glu\Templating\TemplateRenderer;
+use Glu\Templating\Engine;
 
 interface Extension
 {
@@ -27,6 +27,6 @@ interface Extension
     /* @return _Function[] */
     public function rendererFunctions(): array;
 
-    /** @return TemplateRenderer[] */
+    /** @return Engine[] */
     public function templateRenderers(): array;
 }
