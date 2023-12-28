@@ -17,6 +17,7 @@ use Glu\Extension\Extension;
 use Glu\Http\Factory;
 use Glu\Http\Request;
 use Glu\Http\Response;
+use Glu\Routing\Route;
 use Glu\Routing\Router;
 use Glu\Templating\TemplateRenderer;
 use Psr\Cache\CacheItemPoolInterface;
@@ -212,21 +213,22 @@ final class App implements AppInterface
         ?string $secured = null
     )
     {
+        $method = \mb_strtolower($method);
         if ($name === null) {
             $name = $method . '_' . $path;
         }
-        $this->router->add($name, $method, $path, $callback, secured: $secured);
-        if ($method === 'GET') {
-            $this->router->add($name, 'GET', $path, $callback, secured: $secured);
-        }
+        $this->router->add(
+            new Route($name, $method, $path, $callback)
+        );
     }
 
     public function addRedirect(string $from, string $to, int $code = 302) {
-        $this->router->add('redirect_', 'GET', $from, function () use ($to, $code) {
+        $this->router->add(
+            new Route('redirect_', 'get', $from, function () use ($to, $code) {
             return new Response('', $code, [
                 'location' => $to
             ]);
-        });
+        }));
     }
 
     public function render(string $path, array $context = []): string
@@ -254,14 +256,7 @@ final class App implements AppInterface
                 //$this->sources[$name] = DbalSource::create($dsn);
             }
             foreach ($extension->routes() as $route) {
-                foreach ($route->methods() as $method) {
-                    $this->router->add(
-                        $route->name(),
-                        $method,
-                        $route->path(),
-                        $route->controller()
-                    );
-                }
+                $this->router->add($route);
             }
         }
     }

@@ -7,15 +7,10 @@ use Glu\Http\Request;
 final class Router {
     private array $routes = [];
 
-    public function add(
-        string   $name,
-        string   $method,
-        string   $path,
-        callable|string $controller,
-        ?string  $secured = null
-    ) {
+    public function add(Route $route) {
         $parameters = [];
 
+        $path = $route->path();
         $pathRegex = \preg_quote($path, '#');
         if (\strpos($path, '{')) {
             $pathRegex = \preg_replace_callback('/\\\{([A-Za-z0-9]+)\\\}(.)?/',function($m) use (&$parameters) {
@@ -23,28 +18,17 @@ final class Router {
                 return '(?P<'.$m[1].'>[^'.($m[2]??'/').']++)'.($m[2]??'');
             }, $pathRegex);
         }
-        if (false === isset($this->routes[$method])) {
-            $this->routes[$method] = [];
-        }
 
-        $this->routes[$method][$pathRegex] = [
-            'name' => $name,
-            'path' => $path,
-            'method' => $method,
-            'controller' => $controller,
-            'secured' => $secured,
-            'parameters' => $parameters
-        ];
+        foreach ($route->methods() as $method) {
+            if (false === isset($this->routes[$method])) {
+                $this->routes[$method] = [];
+            }
 
-        if ($method === 'GET') {
-            $this->routes['HEAD'][$pathRegex] = [
-                'name' => $name,
-                'path' => $path,
-                'method' => $method,
-                'controller' => $controller,
-                'secured' => $secured,
-                'parameters' => $parameters
-            ];
+            $this->routes[$method][$pathRegex] = $route;
+
+            if ($method === 'get') {
+                $this->routes['head'][$pathRegex] = $route;
+            }
         }
     }
 

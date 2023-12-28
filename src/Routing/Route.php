@@ -20,9 +20,11 @@ final class Route
         $this->name = $name;
 
         if (\is_string($methods)) {
-            $methods = [$methods];
+            $methods = [\mb_strtolower($methods)];
         }
-        $this->methods = $methods;
+        $this->methods = \array_map(function($method) {
+            return \mb_strtolower($method);
+        }, $methods);
 
         $this->path = $path;
         $this->controller = $controller;

@@ -21,7 +21,7 @@ final class Request {
 
         return new self(
             $httpFactory->createServerRequest(
-                $_SERVER['REQUEST_METHOD'] ?? 'GET',
+                \mb_strtolower($_SERVER['REQUEST_METHOD']) ?? 'get',
                 $httpFactory->createUri($_SERVER['REQUEST_URI']),
                 $_SERVER
             )
