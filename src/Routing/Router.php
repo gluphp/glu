@@ -56,13 +56,13 @@ final class Router {
     public function generate(string $name, array $parameters): string
     {
         foreach ($this->routes as $methodRoutes) {
-            foreach ($methodRoutes as $routeRegex=>$route) {
-                if ($route['name'] === $name) {
+            foreach ($methodRoutes as $route) {
+                if ($route->route()->name() === $name) {
                     $parametersReplace = [];
                     foreach ($parameters as $key => $value) {
                         $parametersReplace['{' . $key . '}'] = $value;
                     }
-                    return \strtr($route['path'], $parametersReplace);
+                    return \strtr($route->route()->path(), $parametersReplace);
                 }
             }
         }

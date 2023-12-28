@@ -10,11 +10,11 @@ final class Response {
     private ResponseInterface $psr7Response;
 
     public function __construct(
-        public string $contents,
-        public int $status = 200,
-        public array $headers = [])
+        string $contents,
+        int $status = 200,
+        array $headers = [])
     {
-        $this->psr7Response = new Psr7Response($status, $headers, $this->contents);
+        $this->psr7Response = new Psr7Response($status, $headers, $contents);
     }
 
     public static function createRedirect(string $location, int $statusCode = 302)
@@ -22,6 +22,11 @@ final class Response {
         return new self('', $statusCode, [
             'location' => $location
         ]);
+    }
+
+    public function psr7Response(): ResponseInterface
+    {
+        return $this->psr7Response;
     }
 
     public function headers(): array
@@ -32,6 +37,11 @@ final class Response {
     public function contents(): string
     {
         return $this->psr7Response->getBody()->getContents();
+    }
+
+    public function setContents(string $contents): void
+    {
+        $this->psr7Response->getBody()->write($contents);
     }
 
     public function statusCode(): int

@@ -165,7 +165,6 @@ final class App implements AppInterface
             if ($controllerExecutedEvent->responseHasBeenSet()) {
                 return $controllerExecutedEvent->response();
             }
-
         } catch (\Throwable $e) {
             $exceptionThrownEvent = new ExceptionThrownEvent($this->request, $response, $e);
             $this->eventDispatcher->dispatch($exceptionThrownEvent);
@@ -173,7 +172,7 @@ final class App implements AppInterface
                 return $exceptionThrownEvent->response();
             }
 
-            return new Response('', 500);
+            return new Response($e->getMessage(), 500);
         }
 
         $responseReadyEvent = new ResponseReadyEvent($this->request, $response);
@@ -195,7 +194,7 @@ final class App implements AppInterface
         http_response_code($response->statusCode());
         $headers = $response->headers();
         foreach ($headers as $headerName => $headerValue) {
-            header($headerName . ': ' . $headerValue);
+            header($headerName . ': ' . $response->psr7Response()->getHeaderLine($headerName));
         }
         echo $response->contents();
     }
