@@ -2,7 +2,7 @@
 
 namespace Glu\Http;
 
-final class Response {
+final class IntermediateResponse {
 
     private static $reasonPhrases = [
         100 => 'Continue',
@@ -80,5 +80,16 @@ final class Response {
             $headers,
             $this->contents
         );
+    }
+
+
+    public function replaceShortCodes(string $code)
+    {
+
+    }
+
+    public function replaceBody(): void
+    {
+
     }
 }

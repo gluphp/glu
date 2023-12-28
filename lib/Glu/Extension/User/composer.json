@@ -1,0 +1,25 @@
+{
+	"name": "glu/ext-user",
+	"autoload": {
+		"psr-4": {
+			"Glu\\Extension\\User\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Glu\\Extension\\User\\Tests\\": "tests/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Raul Fraile",
+			"email": "raulfraile@gmail.com"
+		}
+	],
+	"require-dev": {
+		"phpunit/phpunit": "^10.2"
+	},
+	"require": {
+		"glu/glu": "*"
+	}
+}
