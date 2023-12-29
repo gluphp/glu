@@ -7,6 +7,7 @@ use Glu\Event\Lifecycle\ResponseReadyEvent;
 use Glu\Event\Listener;
 use Glu\Extension\BaseExtension;
 use Glu\Templating\_Function;
+use Psr\Container\ContainerInterface;
 
 final class GoogleAdsenseExtension extends BaseExtension
 {
@@ -21,7 +22,7 @@ final class GoogleAdsenseExtension extends BaseExtension
         $this->usingAds = false;
     }
 
-    public static function load(Container $locator, array $context): static
+    public static function load(ContainerInterface $container, array $context): static
     {
         return new self($context['client_id']);
     }

@@ -24,6 +24,9 @@ use Glu\Templating\RendererFactory;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
+use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use function microtime;
 
 final class App implements AppInterface
@@ -45,6 +48,8 @@ final class App implements AppInterface
     private float $startTime;
     private float $endTime;
 
+    private ContainerBuilder $containerBuilder;
+
     public function __construct(
         string $appDir,
         array          $sources = [],
@@ -57,6 +62,10 @@ final class App implements AppInterface
     )
     {
         $this->startTime = microtime(true);
+
+        $this->containerBuilder = new ContainerBuilder();
+
+
 
         $environment = new Environment($appDir);
 
@@ -94,7 +103,30 @@ final class App implements AppInterface
             $appDir . '/var/cache/' . $environment->get('global', 'env')
         );*/
 
-        $this->container->set(new ServiceDefinition(
+
+        $this->containerBuilder->register('glu.templating.renderer', RendererFactory::class)
+            ->setFactory([RendererFactory::class, 'create'])
+            ->addArgument('%glu.templating.engines%');
+
+        $this->containerBuilder->register('glu.router', Router::class);
+
+        $this->containerBuilder->addCompilerPass(
+            new class implements CompilerPassInterface {
+                public function process(ContainerBuilder $container)
+                {
+                    $renderer = $container->getDefinition('glu.templating.renderer_factory');
+                    foreach ($container->findTaggedServiceIds('glu.tag.templating_engine') as $id => $tags) {
+                        $renderer->addArgument('@' . $id);
+                    }
+                }
+
+            }
+        );
+
+        $this->containerBuilder->compile();
+
+
+        /*$this->container->set(new ServiceDefinition(
             'glu.templating.renderer',
             RendererFactory::class,
             [
@@ -104,7 +136,7 @@ final class App implements AppInterface
             true,
             'create'
         ));
-        $this->container->setSynthetic('glu.router', $this->router);
+        $this->container->setSynthetic('glu.router', $this->router);*/
 
         // event dispatcher
         $my = [];
@@ -250,14 +282,13 @@ final class App implements AppInterface
     {
         /** @var Renderer $renderer */
         $renderer = $this->container->get('glu.templating.renderer');
-        return $renderer->resolve($path)->render($path, $this->request, $context);
-        return $this->engineResolver->render($path, $this->request, $context);
+        return $renderer->render($path, $this->request, $context);
     }
 
     private function loadExtensions(array $extensions): void {
-        $templatingEngines = $this->container->get('glu.templating.engines');
-        $templatingDirectories = $this->container->get('glu.templating.directories');
-        $templatingFunctions = $this->container->get('glu.templating.functions');
+        $templatingEngines = $this->containerBuilder->getParameter('glu.templating.engines');
+        $templatingDirectories = $this->containerBuilder->getParameter('glu.templating.directories');
+        $templatingFunctions = $this->containerBuilder->getParameter('glu.templating.functions');
 
         foreach ($extensions as $extensionFqn => $extensionContext) {
             /** @var Extension $extension */
@@ -289,9 +320,9 @@ final class App implements AppInterface
             }
         }
 
-        $this->container->setParameter('glu.templating.engines', $templatingEngines);
-        $this->container->setParameter('glu.templating.directories', $templatingDirectories);
-        $this->container->setParameter('glu.templating.functions', $templatingFunctions);
+        $this->containerBuilder->setParameter('glu.templating.engines', $templatingEngines);
+        $this->containerBuilder->setParameter('glu.templating.directories', $templatingDirectories);
+        $this->containerBuilder->setParameter('glu.templating.functions', $templatingFunctions);
     }
 
     public function addDefaultHeader(string $name, string $value): void

@@ -4,6 +4,7 @@ namespace Glu\Extension\Web;
 
 use Glu\DependencyInjection\Container;
 use Glu\Extension\BaseExtension;
+use Psr\Container\ContainerInterface;
 
 final class WebExtension extends BaseExtension
 {
@@ -12,7 +13,7 @@ final class WebExtension extends BaseExtension
     {
     }
 
-    public static function load(Container $locator, array $context): self
+    public static function load(ContainerInterface $container, array $context): self
     {
         return new self();
     }

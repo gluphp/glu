@@ -8,6 +8,7 @@ use Glu\Event\Listener;
 use Glu\Extension\BaseExtension;
 use Glu\Templating\Engine;
 use Glu\Templating\Renderer;
+use Psr\Container\ContainerInterface;
 
 final class GoogleAnalyticsExtension extends BaseExtension
 {
@@ -23,9 +24,9 @@ final class GoogleAnalyticsExtension extends BaseExtension
         $this->renderer = $renderer;
     }
 
-    public static function load(Container $locator, array $context): static
+    public static function load(ContainerInterface $container, array $context): static
     {
-        return new self($context['id'], $locator->get('glu.templating.renderer'));
+        return new self($context['id'], $container->get('glu.templating.renderer'));
     }
 
     public function name(): string

@@ -10,6 +10,7 @@ use Glu\Http\Request;
 use Glu\Http\Response;
 use Glu\Routing\Route;
 use Glu\Templating\_Function;
+use Psr\Container\ContainerInterface;
 
 final class ContactFormExtension extends BaseExtension
 {
@@ -28,11 +29,11 @@ final class ContactFormExtension extends BaseExtension
         $this->successPath = $successPath;
     }
 
-    public static function load(Container $locator, array $context): static
+    public static function load(ContainerInterface $container, array $context): static
     {
         return new self(
             $context['source'] ?? new FilesystemSource(
-                $locator->get('data_directory') . '/glu/contact_form'
+                $container->get('data_directory') . '/glu/contact_form'
             ),
                 $context['path_prefix'] ?? '',
                 $context['success_path'] ?? '/',

@@ -8,10 +8,11 @@ use Glu\DependencyInjection\ServiceDefinition;
 use Glu\Routing\Route;
 use Glu\Templating\_Function;
 use Glu\Templating\Engine;
+use Psr\Container\ContainerInterface;
 
 interface Extension
 {
-    public static function load(Container $locator, array $context): static;
+    public static function load(ContainerInterface $container, array $context): static;
 
     public function name(): string;
 

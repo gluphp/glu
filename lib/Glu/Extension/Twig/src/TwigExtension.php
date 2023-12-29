@@ -2,11 +2,11 @@
 
 namespace Glu\Extension\Twig;
 
-use Glu\DependencyInjection\Container;
 use Glu\Extension\BaseExtension;
 use Glu\Http\Request;
 use Glu\Http\Response;
 use Glu\Routing\Route;
+use Psr\Container\ContainerInterface;
 
 final class TwigExtension extends BaseExtension
 {
@@ -15,7 +15,7 @@ final class TwigExtension extends BaseExtension
     {
     }
 
-    public static function load(Container $locator, array $context): static
+    public static function load(ContainerInterface $container, array $context): static
     {
         return new self();
     }

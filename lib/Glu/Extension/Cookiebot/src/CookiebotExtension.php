@@ -6,6 +6,7 @@ use Glu\DependencyInjection\Container;
 use Glu\Event\Lifecycle\ResponseReadyEvent;
 use Glu\Event\Listener;
 use Glu\Extension\BaseExtension;
+use Psr\Container\ContainerInterface;
 
 final class CookiebotExtension extends BaseExtension
 {
@@ -18,7 +19,7 @@ final class CookiebotExtension extends BaseExtension
         $this->id = $id;
     }
 
-    public static function load(Container $locator, array $context): static
+    public static function load(ContainerInterface $container, array $context): static
     {
         return new self($context['id']);
     }

@@ -40,7 +40,8 @@
         "symfony/cache": "^6.3",
         "guzzlehttp/psr7": "^2.6",
         "psr/event-dispatcher": "^1.0",
-        "psr/http-factory": "^1.0"
+        "psr/http-factory": "^1.0",
+        "symfony/dependency-injection": "^6.4"
     }
 
 }
