@@ -6,7 +6,7 @@ use Glu\Templating\Engine;
 
 abstract class BaseExtension implements Extension
 {
-    public function templateDirectories(): array
+    public function configuration(): array
     {
         return [];
     }
@@ -17,7 +17,7 @@ abstract class BaseExtension implements Extension
         return [];
     }
 
-    public function services(): array
+    public function containerDefinitions(): array
     {
         return [];
     }

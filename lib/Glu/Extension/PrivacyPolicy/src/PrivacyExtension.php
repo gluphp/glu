@@ -23,7 +23,7 @@ final class PrivacyExtension extends BaseExtension
         $this->baseTemplate = $baseTemplate;
     }
 
-    public static function load(ContainerInterface $container, array $context): static
+    public static function load(Container $container, array $context): static
     {
         return new self(
             $context['organization'],
@@ -56,7 +56,7 @@ final class PrivacyExtension extends BaseExtension
         ];
     }
 
-    public function templateDirectories(): array
+    public function configuration(): array
     {
         return [
             __DIR__ . '/Template'

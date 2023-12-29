@@ -2,7 +2,10 @@
 
 namespace Glu\Extension\Twig;
 
+use Glu\DependencyInjection\Container;
+use Glu\DependencyInjection\Service;
 use Glu\Extension\BaseExtension;
+use Glu\Extension\Twig\Templating\TwigEngine;
 use Glu\Http\Request;
 use Glu\Http\Response;
 use Glu\Routing\Route;
@@ -15,7 +18,7 @@ final class TwigExtension extends BaseExtension
     {
     }
 
-    public static function load(ContainerInterface $container, array $context): static
+    public static function load(Container $container, array $context): static
     {
         return new self();
     }
@@ -25,18 +28,18 @@ final class TwigExtension extends BaseExtension
         return 'dev.glu.twig';
     }
 
-    public function services(): array
+    public function containerDefinitions(): array
     {
         return [
-            new \Glu\DependencyInjection\ServiceDefinition(
-                '',
-                \Glu\Extension\Twig\Templating\TwigEngine::class,
+            new Service(
+                'glu.ext.twig.engine',
+                TwigEngine::class,
                 [
                     'glu.templating_directories',
                     'glu.router',
                     'glu.cache_dir'
                 ],
-                ['glu.templating_engine']
+                [Container::TAG_TEMPLATING_ENGINE]
             )
         ];
     }

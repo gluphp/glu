@@ -6,7 +6,7 @@ use Glu\Environment;
 use Glu\Http\Request;
 use Glu\Routing\Router;
 use Glu\SessionManagement;
-use Glu\Templating\_Function;
+use Glu\Templating\ConcreteFunction;
 use Glu\Templating\Engine;
 use Twig\Environment as TwigEnvironment;
 use Twig\Loader\FilesystemLoader;
@@ -63,12 +63,12 @@ final class TwigEngine implements Engine {
         $this->initialized = true;
     }
 
-    public function registerFunction(_Function $function): void
+    public function registerFunction(ConcreteFunction $function): void
     {
         $this->functions[] = $function;
     }
 
-    private function addFunction(_Function $function): void
+    private function addFunction(ConcreteFunction $function): void
     {
         $options = [];
         if ($function->escape() === false) {

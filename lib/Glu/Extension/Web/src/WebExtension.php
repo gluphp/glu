@@ -13,7 +13,7 @@ final class WebExtension extends BaseExtension
     {
     }
 
-    public static function load(ContainerInterface $container, array $context): self
+    public static function load(Container $container, array $context): self
     {
         return new self();
     }

@@ -6,13 +6,13 @@ use Glu\DependencyInjection\Container;
 
 final class EventDispatcher
 {
-    /** @var array<string, Listener[]> */
+    /** @var array<string, ListenerImp[]> */
     private array $listeners;
 
     private Container $locator;
 
     /**
-     * @param Listener[] $listeners
+     * @param ListenerImp[] $listeners
      */
     public function __construct(array $listeners, Container $locator)
     {
@@ -23,7 +23,7 @@ final class EventDispatcher
         }
     }
 
-    public function register(Listener $listener): void
+    public function register(ListenerImp $listener): void
     {
         if (false === \array_key_exists($listener->event(), $this->listeners)) {
             $this->listeners[$listener->event()] = [];

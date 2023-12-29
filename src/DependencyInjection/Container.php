@@ -6,13 +6,20 @@ use Psr\Container\ContainerInterface;
 
 final class Container implements ContainerInterface {
 
+    public const SERVICE_TEMPLATING_RENDERER_FACTORY = 'glu.templating.renderer_factory';
+    public const SERVICE_TEMPLATING_RENDERER = 'glu.templating.renderer';
+
+    public const TAG_LISTENER = 'glu.tag.listener';
+    public const TAG_TEMPLATING_ENGINE = 'glu.tag.templating_engine';
+    public const TAG_TEMPLATING_FUNCTION = 'glu.tag.templating_function';
+
     private array $parameters;
-    /** @var ServiceDefinition[] */
+    /** @var Service[] */
     private array $definitions;
     private array $synthetic;
 
     /**
-     * @param ServiceDefinition[] $services
+     * @param Service[] $services
      */
     public function __construct(array $definitions, array $parameters = [])
     {
@@ -24,7 +31,7 @@ final class Container implements ContainerInterface {
         }
     }
 
-    private function instantiate(ServiceDefinition $definition) {
+    private function instantiate(Service $definition) {
         $arguments = [];
         foreach ($definition->arguments() as $argument) {
             if (\str_starts_with($argument, '@')) {
@@ -66,9 +73,9 @@ final class Container implements ContainerInterface {
             ;
     }
 
-    public function set(ServiceDefinition $definition): void
+    public function set(Service $definition): void
     {
-        $this->definitions[$definition->name()] = $definition;
+        $this->definitions[$definition->id()] = $definition;
     }
 
     public function setSynthetic(string $name, $service): void

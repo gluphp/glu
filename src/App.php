@@ -3,15 +3,17 @@
 namespace Glu;
 
 use Glu\Adapter\DataSource\DbalSource;
+use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\ListenerCompilerPass;
+use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\TemplatingEngineCompilerPass;
 use Glu\DependencyInjection\Container;
-use Glu\DependencyInjection\ServiceDefinition;
+use Glu\DependencyInjection\Service;
 use Glu\Event\EventDispatcher;
 use Glu\Event\Lifecycle\ControllerExecutedEvent;
 use Glu\Event\Lifecycle\ExceptionThrownEvent;
 use Glu\Event\Lifecycle\RequestReceivedEvent;
 use Glu\Event\Lifecycle\ResponseReadyEvent;
 use Glu\Event\Lifecycle\RouteMatchedEvent;
-use Glu\Event\Listener;
+use Glu\Event\ListenerImp;
 use Glu\Extension\Extension;
 use Glu\Extension\Twig\Templating\TwigEngine;
 use Glu\Http\Request;
@@ -27,6 +29,7 @@ use Psr\Log\NullLogger;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
+use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
 use function microtime;
 
 final class App implements AppInterface
@@ -63,7 +66,13 @@ final class App implements AppInterface
     {
         $this->startTime = microtime(true);
 
-        $this->containerBuilder = new ContainerBuilder();
+        $this->containerBuilder = new ContainerBuilder(
+            new ParameterBag([
+                'glu.templating.engines' => [],
+                'glu.templating.directories' => [],
+                'glu.templating.engines' => [],
+            ])
+        );
 
 
 
@@ -83,7 +92,7 @@ final class App implements AppInterface
         ];
 
         foreach ($sources as $name => $dsn) {
-            $this->container->set(new ServiceDefinition(
+            $this->container->set(new Service(
                 'source_' . $name,
                 DbalSource::class,
                 [$dsn],
@@ -109,21 +118,10 @@ final class App implements AppInterface
 
         $this->containerBuilder->register('glu.router', Router::class);
 
-        $this->containerBuilder->addCompilerPass(
-            new class implements CompilerPassInterface {
-                public function process(ContainerBuilder $container)
-                {
-                    $renderer = $container->getDefinition('glu.templating.renderer_factory');
-                    foreach ($container->findTaggedServiceIds('glu.tag.templating_engine') as $id => $tags) {
-                        $renderer->addArgument('@' . $id);
-                    }
-                }
-
-            }
-        );
+        $this->containerBuilder->addCompilerPass(new ListenerCompilerPass());
+        $this->containerBuilder->addCompilerPass(new TemplatingEngineCompilerPass());
 
         $this->containerBuilder->compile();
-
 
         /*$this->container->set(new ServiceDefinition(
             'glu.templating.renderer',
@@ -142,7 +140,7 @@ final class App implements AppInterface
         foreach ($listeners as $eventName => $listener) {
             if (\is_array($listener)) {
                 foreach ($listener as $item) {
-                    $my[] = new Listener($eventName, $item);
+                    $my[] = new ListenerImp($eventName, $item);
                 }
             } else {
                 $my[] = $listener;
@@ -284,27 +282,35 @@ final class App implements AppInterface
         return $renderer->render($path, $this->request, $context);
     }
 
+    /**
+     * @param Extension[] $extensions
+     */
     private function loadExtensions(array $extensions): void {
-        $templatingEngines = $this->containerBuilder->getParameter('glu.templating.engines');
         $templatingDirectories = $this->containerBuilder->getParameter('glu.templating.directories');
         $templatingFunctions = $this->containerBuilder->getParameter('glu.templating.functions');
 
         foreach ($extensions as $extensionFqn => $extensionContext) {
+            $this->containerBuilder->register($extensionFqn, $extensionFqn)
+                ->setArguments(
+                    $extensionContext
+                );
+        }
+        
+        foreach ($extensions as $extensionFqn => $extensionContext) {
             /** @var Extension $extension */
-            $extension = $extensionFqn::load($this->container, $extensionContext);
+            $extension = $this->$extensionFqn::load($this->container, $extensionContext);
 
-            foreach ($extension->services() as $service) {
-                $this->container->set($service);
-                if (\in_array('glu.template_engine', $service->tags())) {
-                    $templatingEngines[] = $service->name();
-                }
+            foreach ($extension->containerDefinitions() as $service) {
+                $this->containerBuilder
+                    ->register($service->id(), $service->fqn())
+                    ->setTags($service->tags());
             }
 
             foreach ($extension->listeners() as $listener) {
                 $this->eventDispatcher->register($listener);
             }
 
-            foreach ($extension->templateDirectories() as $templateDirectory) {
+            foreach ($extension->configuration() as $templateDirectory) {
                 $templatingDirectories[] = $templateDirectory;
             }
             foreach ($extension->rendererFunctions() as $_function) {
@@ -319,7 +325,6 @@ final class App implements AppInterface
             }
         }
 
-        $this->containerBuilder->setParameter('glu.templating.engines', $templatingEngines);
         $this->containerBuilder->setParameter('glu.templating.directories', $templatingDirectories);
         $this->containerBuilder->setParameter('glu.templating.functions', $templatingFunctions);
     }

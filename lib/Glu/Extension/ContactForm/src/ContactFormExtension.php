@@ -9,7 +9,7 @@ use Glu\Extension\BaseExtension;
 use Glu\Http\Request;
 use Glu\Http\Response;
 use Glu\Routing\Route;
-use Glu\Templating\_Function;
+use Glu\Templating\ConcreteFunction;
 use Psr\Container\ContainerInterface;
 
 final class ContactFormExtension extends BaseExtension
@@ -29,7 +29,7 @@ final class ContactFormExtension extends BaseExtension
         $this->successPath = $successPath;
     }
 
-    public static function load(ContainerInterface $container, array $context): static
+    public static function load(Container $container, array $context): static
     {
         return new self(
             $context['source'] ?? new FilesystemSource(
@@ -48,7 +48,7 @@ final class ContactFormExtension extends BaseExtension
     public function rendererFunctions(): array
     {
         return [
-            new _Function(
+            new ConcreteFunction(
                 'contact_form',
                 function() {
                     return <<<CODE
@@ -109,7 +109,7 @@ CODE;
         ];
     }
 
-    public function templateDirectories(): array
+    public function configuration(): array
     {
         return [
             __DIR__ . '/Template'

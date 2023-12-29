@@ -2,25 +2,9 @@
 
 namespace Glu\Event;
 
-final class Listener
+interface Listener
 {
-    private string $event;
+    public function event(): string;
 
-    private string|\Closure $action;
-
-    public function __construct(string $event, string|\Closure $action)
-    {
-        $this->event = $event;
-        $this->action = $action;
-    }
-
-    public function event(): string
-    {
-        return $this->event;
-    }
-
-    public function action(): string|\Closure
-    {
-        return $this->action;
-    }
+    public function action(Event $event): string|\Closure;
 }

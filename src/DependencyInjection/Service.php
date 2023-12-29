@@ -2,9 +2,9 @@
 
 namespace Glu\DependencyInjection;
 
-final class ServiceDefinition
+final class Service implements Definition
 {
-    private string $name;
+    private string $id;
     private string $fqn;
     private array $arguments;
     private array $tags;
@@ -12,15 +12,15 @@ final class ServiceDefinition
     private ?string $factoryMethod;
 
     public function __construct(
-        string $name,
-        string $fqn,
-        array $arguments = [],
-        array $tags = [],
-        bool $isFactory = false,
+        string  $id,
+        string  $fqn,
+        array   $arguments = [],
+        array   $tags = [],
+        bool    $isFactory = false,
         ?string $factoryMethod = null
     )
     {
-        $this->name = $name;
+        $this->id = $id;
         $this->fqn = $fqn;
         $this->arguments = $arguments;
         $this->tags = $tags;
@@ -28,9 +28,9 @@ final class ServiceDefinition
         $this->factoryMethod = $factoryMethod;
     }
 
-    public function name(): string
+    public function id(): string
     {
-        return $this->name;
+        return $this->id;
     }
 
     public function fqn(): string

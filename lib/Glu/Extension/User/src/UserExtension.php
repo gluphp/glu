@@ -34,7 +34,7 @@ final class UserExtension extends BaseExtension
         return 'dev.glu.user';
     }
 
-    public function templateDirectories(): array
+    public function configuration(): array
     {
         return [
             __DIR__ . '/Template'
