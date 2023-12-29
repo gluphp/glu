@@ -105,8 +105,7 @@ final class App implements AppInterface
 
 
         $this->containerBuilder->register('glu.templating.renderer_factory', RendererFactory::class)
-            ->setFactory([RendererFactory::class, 'create'])
-            ->addArgument('%glu.templating.engines%');
+            ->setFactory([RendererFactory::class, 'create']);
 
         $this->containerBuilder->register('glu.router', Router::class);
 
