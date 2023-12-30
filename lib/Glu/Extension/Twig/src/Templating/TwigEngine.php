@@ -18,17 +18,20 @@ final class TwigEngine implements Engine {
     private array $directories;
     private TwigEnvironment $twig;
     private Router $router;
+    private Environment $environment;
     private ?string $cacheDirectory;
     private array $functions;
 
     public function __construct(
         array $directories,
         Router $router,
+        Environment $environment,
         ?string $cacheDirectory = null
     ) {
         $this->initialized = false;
         $this->directories = $directories;
         $this->router = $router;
+        $this->environment = $environment;
         $this->cacheDirectory = $cacheDirectory;
         $this->functions = [];
     }
@@ -94,8 +97,8 @@ final class TwigEngine implements Engine {
                     'url' => $request->url(),
                     'request' => $request
                 ],
-                'global' => Environment::all('globals'),
-                'env' => Environment::get('globals', 'env')
+                'global' => $this->environment->all('globals'),
+                'env' => $this->environment->get('globals', 'env')
             ]));
     }
 

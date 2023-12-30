@@ -10,10 +10,10 @@ final class ListenerCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $renderer = $container->getDefinition(Container::SERVICE_TEMPLATING_RENDERER_FACTORY);
+        /*$renderer = $container->getDefinition(Container::SERVICE_TEMPLATING_RENDERER_FACTORY);
         foreach ($container->findTaggedServiceIds(Container::TAG_TEMPLATING_ENGINE) as $id => $tags) {
             $renderer->addArgument('@' . $id);
-        }
+        }*/
     }
 
 }

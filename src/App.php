@@ -72,24 +72,30 @@ final class App implements AppInterface
             new ParameterBag(
                 array_merge(
                     [
+                        'glu.app_dir' => $appDir,
+                        'glu.data_directory' => $appDir . '/var/data/',
+                        'glu.cache_dir' => $appDir . '/var/cache/',
                         'glu.templating.engines' => [],
-                        'glu.templating.directories' => [],
+                        'glu.templating.directories' => [
+                            $appDir . '/template'
+                        ],
                         'glu.templating.functions' => [],
                     ],
                     $parameters
                 )
             ));
 
-
-
-        $environment = new Environment($appDir);
+        //$environment = new Environment($appDir);
+        $this->containerBuilder->register('glu.environment', Environment::class)
+            ->setArguments(['%glu.app_dir%']);
 
         $this->request = null;
         $this->logger = $logger ?? new NullLogger();
         $this->router = new Router();
 
         $this->container = new Container($services, [
-            'data_directory' => $appDir . '/var/data/'
+            'data_directory' => $appDir . '/var/data/',
+            'glu.cache_dir' => $appDir . '/var/cache/'
         ]);
 
         $this->defaultHeaders = [
@@ -312,8 +318,6 @@ final class App implements AppInterface
 
             foreach ($extension->containerDefinitions() as $service) {
                 if ($service instanceof Service) {
-                    \var_dump($service->tags());
-
                     $tags = [];
                     foreach ($service->tags() as $tag) {
                         $tags[$tag] = [];
@@ -327,7 +331,6 @@ final class App implements AppInterface
                             $arguments[] = $argument;
                         }
                     }
-
 
                     $this->containerBuilder
                         ->register($service->id(), $service->fqn())

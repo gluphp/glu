@@ -3,6 +3,7 @@
 namespace Glu\Extension\Twig;
 
 use Glu\DependencyInjection\Container;
+use Glu\DependencyInjection\Reference;
 use Glu\DependencyInjection\Service;
 use Glu\Extension\BaseExtension;
 use Glu\Extension\Twig\Templating\TwigEngine;
@@ -35,9 +36,9 @@ final class TwigExtension extends BaseExtension
                 'glu.ext.twig.engine',
                 TwigEngine::class,
                 [
-                    'glu.templating_directories',
-                    'glu.router',
-                    'glu.cache_dir'
+                    new Reference('glu.templating_directories'),
+                    new Reference('glu.router'),
+                    new Reference('glu.cache_dir')
                 ],
                 [Container::TAG_TEMPLATING_ENGINE]
             )
