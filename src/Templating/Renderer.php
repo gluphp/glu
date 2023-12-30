@@ -9,7 +9,7 @@ final class Renderer {
     /** @var Engine[] */
     private array $engines;
 
-    public function __construct(Engine ...$engines)
+    public function __construct(array $engines)
     {
         $this->engines = $engines;
     }

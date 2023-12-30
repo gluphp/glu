@@ -6,6 +6,7 @@ use Glu\Adapter\DataSource\DbalSource;
 use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\ListenerCompilerPass;
 use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\TemplatingEngineCompilerPass;
 use Glu\DependencyInjection\Container;
+use Glu\DependencyInjection\Reference;
 use Glu\DependencyInjection\Service;
 use Glu\Event\EventDispatcher;
 use Glu\Event\Lifecycle\ControllerExecutedEvent;
@@ -62,17 +63,22 @@ final class App implements AppInterface
         array $listeners = [],
         ?LoggerInterface $logger = null,
         string $templatesDir = __DIR__ . '/../../../../template',
+        array $parameters = []
     )
     {
         $this->startTime = microtime(true);
 
         $this->containerBuilder = new ContainerBuilder(
-            new ParameterBag([
-                'glu.templating.engines' => [],
-                'glu.templating.directories' => [],
-                'glu.templating.engines' => [],
-            ])
-        );
+            new ParameterBag(
+                array_merge(
+                    [
+                        'glu.templating.engines' => [],
+                        'glu.templating.directories' => [],
+                        'glu.templating.functions' => [],
+                    ],
+                    $parameters
+                )
+            ));
 
 
 
@@ -114,14 +120,15 @@ final class App implements AppInterface
 
 
         $this->containerBuilder->register('glu.templating.renderer_factory', RendererFactory::class)
-            ->setFactory([RendererFactory::class, 'create']);
+            ->setFactory([RendererFactory::class, 'create'])
+            ->setPublic(true);
 
         $this->containerBuilder->register('glu.router', Router::class);
 
         $this->containerBuilder->addCompilerPass(new ListenerCompilerPass());
         $this->containerBuilder->addCompilerPass(new TemplatingEngineCompilerPass());
 
-        $this->containerBuilder->compile();
+
 
         /*$this->container->set(new ServiceDefinition(
             'glu.templating.renderer',
@@ -158,6 +165,8 @@ final class App implements AppInterface
                 );
             }
         ];
+
+        $this->containerBuilder->compile();
     }
 
     public function handle(Request $request): Response
@@ -216,7 +225,7 @@ final class App implements AppInterface
             if ($exceptionThrownEvent->responseHasBeenSet()) {
                 return $exceptionThrownEvent->response();
             }
-
+            \var_dump($e->getFile(), $e->getLine(), \get_class($e), $e->getTraceAsString());
             return new Response($e->getMessage(), 500);
         }
 
@@ -278,7 +287,7 @@ final class App implements AppInterface
     public function render(string $path, array $context = []): string
     {
         /** @var Renderer $renderer */
-        $renderer = $this->container->get('glu.templating.renderer');
+        $renderer = $this->containerBuilder->get('glu.templating.renderer_factory');
         return $renderer->render($path, $this->request, $context);
     }
 
@@ -295,15 +304,41 @@ final class App implements AppInterface
                     $extensionContext
                 );
         }
-        
+
         foreach ($extensions as $extensionFqn => $extensionContext) {
             /** @var Extension $extension */
-            $extension = $this->$extensionFqn::load($this->container, $extensionContext);
+            $extension = $this->containerBuilder->get($extensionFqn);
+            //$extension = $this->$extensionFqn::load($this->container, $extensionContext);
 
             foreach ($extension->containerDefinitions() as $service) {
-                $this->containerBuilder
-                    ->register($service->id(), $service->fqn())
-                    ->setTags($service->tags());
+                if ($service instanceof Service) {
+                    \var_dump($service->tags());
+
+                    $tags = [];
+                    foreach ($service->tags() as $tag) {
+                        $tags[$tag] = [];
+                    }
+
+                    $arguments = [];
+                    foreach ($service->arguments() as $argument) {
+                        if ($argument instanceof Reference) {
+                            $arguments[] = new \Symfony\Component\DependencyInjection\Reference($argument->id());
+                        } else {
+                            $arguments[] = $argument;
+                        }
+                    }
+
+
+                    $this->containerBuilder
+                        ->register($service->id(), $service->fqn())
+                        ->setArguments($arguments)
+                        ->setTags(
+                            $tags
+                        );
+                } else {
+                    $this->containerBuilder->setParameter($service->id(), $service->value());
+                }
+
             }
 
             foreach ($extension->listeners() as $listener) {
