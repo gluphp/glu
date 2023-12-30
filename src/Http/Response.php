@@ -66,4 +66,9 @@ final class Response {
         );
         return $count;
     }
+
+    public function setStatusCode(int $code): void
+    {
+        $this->symfonyResponse->setStatusCode($code);
+    }
 }

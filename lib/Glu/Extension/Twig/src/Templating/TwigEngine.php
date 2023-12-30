@@ -6,7 +6,7 @@ use Glu\Environment;
 use Glu\Http\Request;
 use Glu\Routing\Router;
 use Glu\SessionManagement;
-use Glu\Templating\ConcreteFunction;
+use Glu\Templating\_Function;
 use Glu\Templating\Engine;
 use Twig\Environment as TwigEnvironment;
 use Twig\Loader\FilesystemLoader;
@@ -26,14 +26,15 @@ final class TwigEngine implements Engine {
         array $directories,
         Router $router,
         Environment $environment,
+        array $functions,
         ?string $cacheDirectory = null
     ) {
         $this->initialized = false;
         $this->directories = $directories;
         $this->router = $router;
         $this->environment = $environment;
+        $this->functions = $functions;
         $this->cacheDirectory = $cacheDirectory;
-        $this->functions = [];
     }
 
     private function initialize() {
@@ -66,12 +67,12 @@ final class TwigEngine implements Engine {
         $this->initialized = true;
     }
 
-    public function registerFunction(ConcreteFunction $function): void
+    public function registerFunction(_Function $function): void
     {
         $this->functions[] = $function;
     }
 
-    private function addFunction(ConcreteFunction $function): void
+    private function addFunction(_Function $function): void
     {
         $options = [];
         if ($function->escape() === false) {

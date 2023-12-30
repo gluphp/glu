@@ -8,13 +8,13 @@ final class Route
     /** @var string[]  */
     private array $methods;
     private string $path;
-    private \Closure $controller;
+    private \Closure|string $controller;
 
     public function __construct(
         string $name,
         string|array $methods,
         string $path,
-        \Closure $controller
+        \Closure|string $controller
     )
     {
         $this->name = $name;

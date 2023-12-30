@@ -20,6 +20,7 @@
 		"phpunit/phpunit": "^10.2"
 	},
 	"require": {
-		"glu/glu": "*"
+		"glu/glu": "*",
+		"glu/ext-twig": "*"
 	}
 }

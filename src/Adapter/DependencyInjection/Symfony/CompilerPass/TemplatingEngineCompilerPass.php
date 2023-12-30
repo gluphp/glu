@@ -18,6 +18,12 @@ final class TemplatingEngineCompilerPass implements CompilerPassInterface
             $engines[] = new Reference($id);
         }
         $renderer->addArgument($engines);
+
+        $functions = [];
+        foreach ($container->findTaggedServiceIds(Container::TAG_TEMPLATING_FUNCTION) as $id => $tags) {
+            $functions[] = new Reference($id);
+        }
+        $container->setParameter('glu.templating.functions', $functions);
     }
 
 }

@@ -36,9 +36,11 @@ final class TwigExtension extends BaseExtension
                 'glu.ext.twig.engine',
                 TwigEngine::class,
                 [
-                    new Reference('glu.templating_directories'),
+                    '%glu.templating.directories%',
                     new Reference('glu.router'),
-                    new Reference('glu.cache_dir')
+                    new Reference('glu.environment'),
+                    '%glu.templating.functions%',
+                    '%glu.cache_dir%'
                 ],
                 [Container::TAG_TEMPLATING_ENGINE]
             )

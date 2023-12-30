@@ -129,7 +129,8 @@ final class App implements AppInterface
             ->setFactory([RendererFactory::class, 'create'])
             ->setPublic(true);
 
-        $this->containerBuilder->register('glu.router', Router::class);
+        //$this->containerBuilder->register('glu.router', Router::class);
+        $this->containerBuilder->set('glu.router', $this->router);
 
         $this->containerBuilder->addCompilerPass(new ListenerCompilerPass());
         $this->containerBuilder->addCompilerPass(new TemplatingEngineCompilerPass());
@@ -335,6 +336,7 @@ final class App implements AppInterface
                     $this->containerBuilder
                         ->register($service->id(), $service->fqn())
                         ->setArguments($arguments)
+                        ->setPublic(true)
                         ->setTags(
                             $tags
                         );
@@ -351,9 +353,7 @@ final class App implements AppInterface
             foreach ($extension->configuration() as $templateDirectory) {
                 $templatingDirectories[] = $templateDirectory;
             }
-            foreach ($extension->rendererFunctions() as $_function) {
-                $templatingFunctions[] = $_function;
-            }
+
             foreach ($extension->dataSources() as $name => $dsn) {
                 // make it lazy
                 //$this->sources[$name] = DbalSource::create($dsn);

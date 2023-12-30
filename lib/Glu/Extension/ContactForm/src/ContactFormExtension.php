@@ -5,7 +5,13 @@ namespace Glu\Extension\ContactForm;
 use Glu\Adapter\DataSource\FilesystemSource;
 use Glu\DataSource\Source;
 use Glu\DependencyInjection\Container;
+use Glu\DependencyInjection\Parameter;
+use Glu\DependencyInjection\Service;
 use Glu\Extension\BaseExtension;
+use Glu\Extension\ContactForm\Controller\AdminListController;
+use Glu\Extension\ContactForm\Controller\ContactFormHandler;
+use Glu\Extension\ContactForm\Templating\ContactFormFunction;
+use Glu\Extension\GoogleAnalytics\Listener\CodeInjectorListener;
 use Glu\Http\Request;
 use Glu\Http\Response;
 use Glu\Routing\Route;
@@ -45,30 +51,22 @@ final class ContactFormExtension extends BaseExtension
         return 'glu.ext.contact_form';
     }
 
-    public function rendererFunctions(): array
+    public function containerDefinitions(): array
     {
         return [
-            new ConcreteFunction(
-                'contact_form',
-                function() {
-                    return <<<CODE
-<form action="/contact-handle" method="post">
-
-    <label for="name">Name:</label>
-    <input type="text" id="name" name="name" required aria-label="Enter your name">
-
-    <label for="email">Email:</label>
-    <input type="email" id="email" name="email" required aria-label="Enter your email">
-
-    <label for="message">Message:</label>
-    <textarea id="message" name="message" rows="4" maxlength="300" required aria-label="Type your message"></textarea>
-
-    <button type="submit">Submit</button>
-
-</form>
-CODE;
-                },
-                false
+            new Service(
+                'glu.ext.contact_form.controller.contact_form_handler',
+                ContactFormHandler::class
+            ),
+            new Service(
+                'glu.ext.contact_form.controller.admin_list',
+                AdminListController::class
+            ),
+            new Service(
+                'glu.ext.contact_form.templating.function.contact_form',
+                ContactFormFunction::class,
+                [],
+                [Container::TAG_TEMPLATING_FUNCTION]
             )
         ];
     }
@@ -81,30 +79,13 @@ CODE;
                 $this->name() . '.routes.handler',
                 ['GET', 'POST'],
                 $this->pathPrefix . '/contact-handle',
-                function (Request $request, Response $response, array $args) use ($source) {
-                    if ($request->method() === 'POST') {
-                        $source->insert('dev.glu.contact_form.messages', [
-                            'email' => $request->form('email'),
-                            'message' => $request->form('message')
-                        ]);
-
-                        $response->statusCode = 301;
-                        $response->headers['location'] = $this->pathPrefix . $this->successPath;
-                    }
-                }
+                'glu.ext.contact_form.controller.contact_form_handler'
             ),
             new Route(
                 $this->name() . '.routes.admin_list',
                 'GET',
                 '/admin/contact',
-                function (Request $request, Response $response, array $args) use ($source) {
-                    $response->contents = $this->render(
-                        'admin_contact.html.twig',
-                        [
-                            'items' => $source->fetch('dev.glu.contact_form.messages')
-                        ]
-                    );
-                }
+                'glu.ext.contact_form.controller.admin_list'
             )
         ];
     }

@@ -20,10 +20,11 @@ final class AdFunction implements _Function
 
     public function callable(): callable
     {
-        return <<<CODE
+        return function(string $slot, string $format = 'link') {
+            return <<<CODE
 <ins class="adsbygoogle"
 	 style="display:block"
-	 data-ad-client="$clientId"
+	 data-ad-client="$this->id"
 	 data-ad-slot="$slot"
 	 data-ad-format="$format"
 	 data-full-width-responsive="true"></ins>
@@ -31,11 +32,11 @@ final class AdFunction implements _Function
 	(adsbygoogle = window.adsbygoogle || []).push({});
 </script>
 CODE;
+        };
     }
 
     public function escape(): bool
     {
         return false;
     }
-
 }
