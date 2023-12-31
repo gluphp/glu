@@ -13,7 +13,7 @@ final class ContactFormFunction implements _Function
 
     public function callable(): callable
     {
-        return function() {
+        return function () {
             return <<<CODE
 <form action="/contact-handle" method="post">
 

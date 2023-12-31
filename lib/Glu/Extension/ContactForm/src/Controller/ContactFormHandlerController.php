@@ -32,5 +32,4 @@ final class ContactFormHandlerController implements Controller
             $response->addHeader('location', $this->pathPrefix . $this->successPath);
         }
     }
-
 }

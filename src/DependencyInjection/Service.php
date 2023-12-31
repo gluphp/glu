@@ -18,8 +18,7 @@ final class Service implements Definition
         array   $tags = [],
         bool    $isFactory = false,
         ?string $factoryMethod = null
-    )
-    {
+    ) {
         $this->id = $id;
         $this->fqn = $fqn;
         $this->arguments = $arguments;

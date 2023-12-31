@@ -10,7 +10,8 @@ final class DbalSource implements Source
 {
     public function __construct(
         private readonly \Doctrine\DBAL\Connection $connection
-    ) {}
+    ) {
+    }
 
     public static function create(string $dsn): static
     {

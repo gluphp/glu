@@ -1,22 +1,26 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\Http;
 
 use GuzzleHttp\Psr7\HttpFactory;
 use Psr\Http\Message\ServerRequestInterface;
 
-final class Request {
-
+final class Request
+{
     private ServerRequestInterface $psr7Request;
     private array $query;
 
-    public function __construct(ServerRequestInterface $psr7Request) {
+    public function __construct(ServerRequestInterface $psr7Request)
+    {
         $this->psr7Request = $psr7Request;
         $this->query = [];
         \parse_str($psr7Request->getUri()->getQuery(), $this->query);
     }
 
-    public static function new(): self {
+    public static function new(): self
+    {
         $httpFactory = new HttpFactory();
 
         return new self(

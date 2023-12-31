@@ -2,8 +2,6 @@
 
 namespace Glu\Adapter\DataSource;
 
-use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Tools\DsnParser;
 use Glu\DataSource\Source;
 use Glu\DataSource\SourceFactory;
 

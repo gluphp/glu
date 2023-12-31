@@ -9,7 +9,8 @@ final class DbalSource implements Source
 {
     public function __construct(
         private readonly Connection $connection
-    ) {}
+    ) {
+    }
 
     public function insert(string $table, array $data)
     {

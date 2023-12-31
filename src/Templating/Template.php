@@ -1,8 +1,11 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\Templating;
 
-final class Template {
+final class Template
+{
     private readonly string $path;
     private readonly array $context;
 

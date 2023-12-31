@@ -7,7 +7,6 @@ use Glu\Extension\BaseExtension;
 use Glu\Http\Request;
 use Glu\Http\Response;
 use Glu\Routing\Route;
-use Psr\Container\ContainerInterface;
 
 final class PrivacyExtension extends BaseExtension
 {
@@ -17,8 +16,7 @@ final class PrivacyExtension extends BaseExtension
     public function __construct(
         string $organization,
         string $baseTemplate
-    )
-    {
+    ) {
         $this->organization = $organization;
         $this->baseTemplate = $baseTemplate;
     }

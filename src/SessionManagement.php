@@ -1,15 +1,19 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu;
 
 use User\LoggedInUser;
 
-final class SessionManagement {
+final class SessionManagement
+{
     private static bool $isStarted = false;
 
     private static ?LoggedInUser $user;
 
-    public static function start() {
+    public static function start()
+    {
         if (self::$isStarted === false) {
             \session_start();
             self::$isStarted = true;
@@ -17,7 +21,8 @@ final class SessionManagement {
         }
     }
 
-    public static function end() {
+    public static function end()
+    {
         self::start();
         \session_unset();
         \session_destroy();

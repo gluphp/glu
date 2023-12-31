@@ -6,7 +6,6 @@ use Glu\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
-use function Symfony\Component\DependencyInjection\Loader\Configurator\service;
 
 final class TemplatingEngineCompilerPass implements CompilerPassInterface
 {

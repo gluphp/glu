@@ -2,7 +2,6 @@
 
 namespace Glu\Event;
 
-use Glu\DependencyInjection\Container;
 use Psr\Container\ContainerInterface;
 
 final class EventDispatcher

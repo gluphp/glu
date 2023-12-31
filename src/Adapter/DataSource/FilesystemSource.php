@@ -2,15 +2,14 @@
 
 namespace Glu\Adapter\DataSource;
 
-use Doctrine\DBAL\DriverManager;
-use Doctrine\DBAL\Tools\DsnParser;
 use Glu\DataSource\Source;
 
 final class FilesystemSource implements Source
 {
     public function __construct(
         private readonly string $baseDirectory
-    ) {}
+    ) {
+    }
 
     public static function create(string $baseDirectory): static
     {

@@ -5,13 +5,8 @@ namespace Glu\Extension\GoogleAnalytics;
 use Glu\DependencyInjection\Container;
 use Glu\DependencyInjection\Parameter;
 use Glu\DependencyInjection\Service;
-use Glu\Event\Lifecycle\ResponseReadyEvent;
-use Glu\Event\ListenerImp;
 use Glu\Extension\BaseExtension;
 use Glu\Extension\GoogleAnalytics\Listener\CodeInjectorListener;
-use Glu\Templating\Engine;
-use Glu\Templating\Renderer;
-use Psr\Container\ContainerInterface;
 
 final class GoogleAnalyticsExtension extends BaseExtension
 {

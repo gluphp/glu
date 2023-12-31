@@ -2,18 +2,18 @@
 
 namespace Glu\Extension;
 
-use Glu\Templating\Engine;
-
 abstract class BaseExtension implements Extension
 {
     public function configuration(): array
     {
         return [];
     }
-    public function routes(): array {
+    public function routes(): array
+    {
         return [];
     }
-    public function dataSources(): array {
+    public function dataSources(): array
+    {
         return [];
     }
 

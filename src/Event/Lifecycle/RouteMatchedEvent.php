@@ -2,10 +2,7 @@
 
 namespace Glu\Event\Lifecycle;
 
-use Glu\Event\Event;
-use Glu\Event\LifecycleEvent;
 use Glu\Http\Request;
-use Glu\Http\Response;
 use Glu\Routing\MatchResult;
 
 final class RouteMatchedEvent extends BaseLifecycleEvent
@@ -30,7 +27,8 @@ final class RouteMatchedEvent extends BaseLifecycleEvent
         return $this->matchResult;
     }
 
-    public function setMatchResult(MatchResult $matchResult) {
+    public function setMatchResult(MatchResult $matchResult)
+    {
         $this->matchResult = $matchResult;
     }
 }

@@ -20,7 +20,7 @@ final class AdFunction implements _Function
 
     public function callable(): callable
     {
-        return function(string $slot, string $format = 'link') {
+        return function (string $slot, string $format = 'link') {
             return <<<CODE
 <ins class="adsbygoogle"
 	 style="display:block"

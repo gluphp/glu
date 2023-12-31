@@ -2,22 +2,14 @@
 
 namespace Glu\Extension\ContactForm;
 
-use Glu\Adapter\DataSource\FilesystemSource;
-use Glu\DataSource\Source;
 use Glu\DependencyInjection\Container;
-use Glu\DependencyInjection\Parameter;
 use Glu\DependencyInjection\Reference;
 use Glu\DependencyInjection\Service;
 use Glu\Extension\BaseExtension;
 use Glu\Extension\ContactForm\Controller\AdminListController;
 use Glu\Extension\ContactForm\Controller\ContactFormHandlerController;
 use Glu\Extension\ContactForm\Templating\ContactFormFunction;
-use Glu\Extension\GoogleAnalytics\Listener\CodeInjectorListener;
-use Glu\Http\Request;
-use Glu\Http\Response;
 use Glu\Routing\Route;
-use Glu\Templating\ConcreteFunction;
-use Psr\Container\ContainerInterface;
 
 final class ContactFormExtension extends BaseExtension
 {
@@ -29,8 +21,7 @@ final class ContactFormExtension extends BaseExtension
         string $source,
         string $pathPrefix = '',
         string $successPath = '/'
-    )
-    {
+    ) {
         $this->source = $source;
         $this->pathPrefix = $pathPrefix;
         $this->successPath = $successPath;

@@ -1,14 +1,14 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu;
 
 use Glu\Adapter\DataSource\DbalSource;
-use Glu\Adapter\DataSource\FilesystemSource;
 use Glu\Adapter\DataSource\FilesystemSourceFactory;
 use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\ListenerCompilerPass;
 use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\SourceCompilerPass;
 use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\TemplatingEngineCompilerPass;
-use Glu\DataSource\Source;
 use Glu\DataSource\SourceFactoryFactory;
 use Glu\DependencyInjection\Container;
 use Glu\DependencyInjection\Reference;
@@ -21,21 +21,18 @@ use Glu\Event\Lifecycle\ResponseReadyEvent;
 use Glu\Event\Lifecycle\RouteMatchedEvent;
 use Glu\Event\ListenerImp;
 use Glu\Extension\Extension;
-use Glu\Extension\Twig\Templating\TwigEngine;
 use Glu\Http\Request;
 use Glu\Http\Response;
 use Glu\Routing\Route;
 use Glu\Routing\Router;
 use Glu\Templating\Renderer;
-use Glu\Templating\Engine;
 use Glu\Templating\RendererFactory;
 use Psr\Cache\CacheItemPoolInterface;
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;
-use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\Configurator\ContainerConfigurator;
 use Symfony\Component\DependencyInjection\ParameterBag\ParameterBag;
+
 use function microtime;
 
 final class App implements AppInterface
@@ -68,8 +65,7 @@ final class App implements AppInterface
         ?LoggerInterface $logger = null,
         string $templatesDir = __DIR__ . '/../../../../template',
         array $parameters = []
-    )
-    {
+    ) {
         $this->startTime = microtime(true);
 
         $this->containerBuilder = new ContainerBuilder(
@@ -87,7 +83,8 @@ final class App implements AppInterface
                     ],
                     $parameters
                 )
-            ));
+            )
+        );
 
         $this->containerBuilder->register('glu.environment', Environment::class)
             ->setArguments(['%glu.app_dir%']);
@@ -146,7 +143,7 @@ final class App implements AppInterface
         $this->loadExtensions($extensions);
 
         $this->errorHandlers = [
-            500 => function(\Throwable $e) {
+            500 => function (\Throwable $e) {
                 return new Response(
                     'An error occurred:<br/>' . $e->getMessage() . '<br/>',
                     500
@@ -188,7 +185,7 @@ final class App implements AppInterface
         $controller = $matchResult->route()->controller();
         if (is_string($controller)) {
             $controller = $this->containerBuilder->get($controller);
-            $controller = function(Request $request, Response $response, array $args) use ($controller) {
+            $controller = function (Request $request, Response $response, array $args) use ($controller) {
                 return $controller->handle($request, $response, $args);
             };
         }
@@ -255,8 +252,7 @@ final class App implements AppInterface
         callable|string $callback,
         ?string $name,
         ?string $secured = null
-    )
-    {
+    ) {
         $method = \mb_strtolower($method);
         if ($name === null) {
             $name = $method . '_' . $path;
@@ -266,13 +262,15 @@ final class App implements AppInterface
         );
     }
 
-    public function addRedirect(string $from, string $to, int $code = 302) {
+    public function addRedirect(string $from, string $to, int $code = 302)
+    {
         $this->router->add(
             new Route('redirect_', 'get', $from, function () use ($to, $code) {
                 return new Response('', $code, [
                     'location' => $to
                 ]);
-            }));
+            })
+        );
     }
 
     public function render(string $path, array $context = []): string
@@ -285,7 +283,8 @@ final class App implements AppInterface
     /**
      * @param Extension[] $extensions
      */
-    private function loadExtensions(array $extensions): void {
+    private function loadExtensions(array $extensions): void
+    {
         $templatingDirectories = $this->containerBuilder->getParameter('glu.templating.directories');
         $templatingFunctions = $this->containerBuilder->getParameter('glu.templating.functions');
 

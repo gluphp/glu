@@ -1,9 +1,11 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\Routing;
 
-final class MatchResult {
-
+final class MatchResult
+{
     private bool $found;
     private ?Route $route;
     private array $parameters;
@@ -12,8 +14,7 @@ final class MatchResult {
         bool   $found,
         ?Route $route = null,
         array  $parameters = []
-    )
-    {
+    ) {
         $this->found = $found;
         $this->route = $route;
         $this->parameters = $parameters;

@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\Routing;
 
@@ -15,14 +17,13 @@ final class Route
         string|array $methods,
         string $path,
         \Closure|string $controller
-    )
-    {
+    ) {
         $this->name = $name;
 
         if (\is_string($methods)) {
             $methods = [\mb_strtolower($methods)];
         }
-        $this->methods = \array_map(function($method) {
+        $this->methods = \array_map(function ($method) {
             return \mb_strtolower($method);
         }, $methods);
 

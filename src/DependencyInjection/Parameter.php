@@ -10,8 +10,7 @@ final class Parameter implements Definition
     public function __construct(
         string $id,
         string|int|bool|array $value
-    )
-    {
+    ) {
         $this->id = $id;
         $this->value = $value;
     }

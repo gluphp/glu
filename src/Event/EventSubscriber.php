@@ -4,5 +4,4 @@ namespace Glu\Event;
 
 interface EventSubscriber
 {
-
 }

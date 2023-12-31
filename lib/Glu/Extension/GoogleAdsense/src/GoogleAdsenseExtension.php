@@ -5,14 +5,9 @@ namespace Glu\Extension\GoogleAdsense;
 use Glu\DependencyInjection\Container;
 use Glu\DependencyInjection\Parameter;
 use Glu\DependencyInjection\Service;
-use Glu\Event\Lifecycle\ResponseReadyEvent;
-use Glu\Event\ListenerImp;
 use Glu\Extension\BaseExtension;
 use Glu\Extension\Cookiebot\Listener\CodeInjectorListener;
-use Glu\Extension\Cookiebot\Templating\CookieDeclarationFunction;
 use Glu\Extension\GoogleAdsense\Templating\AdFunction;
-use Glu\Templating\ConcreteFunction;
-use Psr\Container\ContainerInterface;
 
 final class GoogleAdsenseExtension extends BaseExtension
 {
@@ -20,8 +15,7 @@ final class GoogleAdsenseExtension extends BaseExtension
 
     public function __construct(
         string $clientId
-    )
-    {
+    ) {
         $this->clientId = $clientId;
     }
 

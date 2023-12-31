@@ -2,11 +2,9 @@
 
 namespace Glu\Event\Lifecycle;
 
-use Glu\Event\Event;
 use Glu\Event\LifecycleEvent;
 use Glu\Http\Request;
 use Glu\Http\Response;
-use Glu\Routing\MatchResult;
 
 abstract class BaseLifecycleEvent implements LifecycleEvent
 {

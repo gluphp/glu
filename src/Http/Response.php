@@ -1,17 +1,20 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\Http;
 
 use Symfony\Component\HttpFoundation\Response as SymfonyResponse;
 
-final class Response {
+final class Response
+{
     private SymfonyResponse $symfonyResponse;
 
     public function __construct(
         string $contents,
         int $status = 200,
-        array $headers = [])
-    {
+        array $headers = []
+    ) {
         $this->symfonyResponse = new SymfonyResponse($contents, $status, $headers);
     }
 

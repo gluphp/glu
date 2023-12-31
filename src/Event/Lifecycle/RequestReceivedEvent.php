@@ -2,11 +2,7 @@
 
 namespace Glu\Event\Lifecycle;
 
-use Glu\Event\Event;
-use Glu\Event\LifecycleEvent;
 use Glu\Http\Request;
-use Glu\Http\Response;
-use Psr\Http\Message\RequestInterface;
 
 final class RequestReceivedEvent extends BaseLifecycleEvent
 {

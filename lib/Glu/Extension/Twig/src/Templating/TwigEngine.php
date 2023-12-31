@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\Extension\Twig\Templating;
 
@@ -12,7 +14,8 @@ use Twig\Environment as TwigEnvironment;
 use Twig\Loader\FilesystemLoader;
 use Twig\TwigFunction;
 
-final class TwigEngine implements Engine {
+final class TwigEngine implements Engine
+{
     private bool $initialized;
     /** @var string[] */
     private array $directories;
@@ -37,7 +40,8 @@ final class TwigEngine implements Engine {
         $this->cacheDirectory = $cacheDirectory;
     }
 
-    private function initialize() {
+    private function initialize()
+    {
         if ($this->initialized) {
             return;
         }

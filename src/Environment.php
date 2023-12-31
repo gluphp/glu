@@ -1,8 +1,11 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu;
 
-final class Environment {
+final class Environment
+{
     private bool $loaded = false;
     private array $values;
 

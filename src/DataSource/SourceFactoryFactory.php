@@ -1,12 +1,16 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\DataSource;
 
-final class SourceFactoryFactory {
+final class SourceFactoryFactory
+{
     /** @var SourceFactory[] */
     private array $sourceFactories;
 
-    public function __construct(array $sourceFactories) {
+    public function __construct(array $sourceFactories)
+    {
         $this->sourceFactories = $sourceFactories;
     }
 

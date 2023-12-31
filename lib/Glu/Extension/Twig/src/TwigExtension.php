@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\Extension\Twig;
 
@@ -7,14 +9,9 @@ use Glu\DependencyInjection\Reference;
 use Glu\DependencyInjection\Service;
 use Glu\Extension\BaseExtension;
 use Glu\Extension\Twig\Templating\TwigEngine;
-use Glu\Http\Request;
-use Glu\Http\Response;
-use Glu\Routing\Route;
-use Psr\Container\ContainerInterface;
 
 final class TwigExtension extends BaseExtension
 {
-
     public function __construct()
     {
     }

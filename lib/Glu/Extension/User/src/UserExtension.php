@@ -21,10 +21,9 @@ final class UserExtension extends BaseExtension
     public function __construct(
         string $source,
         ?\Closure $loginHandler = null
-    )
-    {
+    ) {
         $this->source = $source;
-        $this->loginHandler = $loginHandler ?? function(Source $source, string $username, string $password) {
+        $this->loginHandler = $loginHandler ?? function (Source $source, string $username, string $password) {
             return new LoggedInUser('raul', 'user', []);
         };
     }
@@ -44,10 +43,10 @@ final class UserExtension extends BaseExtension
     public function routes(): array
     {
         return [
-            new Route('tomato:login', 'GET', '/login', function(In $in) {
+            new Route('tomato:login', 'GET', '/login', function (In $in) {
                 return new Template('login.html.twig');
             }),
-            new Route('tomato:login_handle', 'POST', '/login-handle', function(In $in, App $app) {
+            new Route('tomato:login_handle', 'POST', '/login-handle', function (In $in, App $app) {
                 $username = $in->request()->form('username');
                 $password = $in->request()->form('password');
 
@@ -65,18 +64,18 @@ final class UserExtension extends BaseExtension
 
                 return Response::createRedirect('/login');
             }),
-        new Route('tomato:logout', 'GET', '/logout', function(In $in) {
+        new Route('tomato:logout', 'GET', '/logout', function (In $in) {
             SessionManagement::end();
 
             return Response::createRedirect('/');
         }),
 
-        new Route('tomato:reset_password', 'GET', '/reset-password', function(In $in) {
+        new Route('tomato:reset_password', 'GET', '/reset-password', function (In $in) {
 
             return new Template('user/reset_password.html.twig');
         }),
 
-        new Route('tomato:reset_password_handle', 'POST', '/reset-password', function(In $in, App $app) {
+        new Route('tomato:reset_password_handle', 'POST', '/reset-password', function (In $in, App $app) {
             $email = $in->request()->form('username');
 
             $source = $app->source($this->source);
@@ -96,11 +95,11 @@ final class UserExtension extends BaseExtension
             return Response::createRedirect('/reset-password-sent');
         }),
 
-        new Route('tomato:reset_password_sent', 'GET', '/reset-password-sent', function(In $in, App $app) {
+        new Route('tomato:reset_password_sent', 'GET', '/reset-password-sent', function (In $in, App $app) {
             return 'If the user exists, a mail was sent';
         }),
 
-        new Route('tomato:reset_password_verify', 'GET', '/reset-password-verify', function(In $in) {
+        new Route('tomato:reset_password_verify', 'GET', '/reset-password-verify', function (In $in) {
             $username = $in->request()->query('username');
             $resetToken = $in->request()->query('token');
 
@@ -114,14 +113,14 @@ final class UserExtension extends BaseExtension
             return new Response('nooooooooo');
         }),
 
-        new Route('tomato:reset_password_final', 'GET', '/reset-password-final', function(In $in) {
+        new Route('tomato:reset_password_final', 'GET', '/reset-password-final', function (In $in) {
             return new Template('user/reset_password_final.html.twig', [
                 'username' => $in->request()->query('username'),
                 'token' => $in->request()->query('token')
             ]);
         }),
 
-        new Route('tomato:reset_password_final_handler', 'POST', '/reset-password-final', function(In $in) {
+        new Route('tomato:reset_password_final_handler', 'POST', '/reset-password-final', function (In $in) {
             $username = $in->request()->form('username');
             $resetToken = $in->request()->form('token');
 
@@ -139,7 +138,7 @@ final class UserExtension extends BaseExtension
             return Response::createRedirect('/login');
         }),
 
-            new Route('tomato:user_area', 'GET', '/user', function(Request $request) {
+            new Route('tomato:user_area', 'GET', '/user', function (Request $request) {
                 return 'hello user';
             })
         ];

@@ -16,8 +16,7 @@ final class RequestBuilder
     public function __construct(
         string $method = 'GET',
         string $path = '/'
-    )
-    {
+    ) {
         $this->method = $method;
         $this->path = $path;
         $this->querystring = [];

@@ -8,8 +8,7 @@ final class LoggedInUser
         public readonly string $username,
         public readonly string $role,
         public readonly array $additionalInfo,
-    )
-    {
+    ) {
 
     }
 

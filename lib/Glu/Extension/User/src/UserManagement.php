@@ -26,13 +26,15 @@ class UserManagement
         return true;
     }
 
-    public function generatePasswordResetToken(Source $source, string $username, int $expirationSeconds = 3600): string {
+    public function generatePasswordResetToken(Source $source, string $username, int $expirationSeconds = 3600): string
+    {
         $resetToken = 'xy1234567890abc';
 
         \file_put_contents(__DIR__ . '/../var/data/tomato/reset_password_' . $username, $resetToken);
     }
 
-    public function verifyPasswordResetToken(Source $source, string $username, string $token): string {
+    public function verifyPasswordResetToken(Source $source, string $username, string $token): string
+    {
         return $token === \file_get_contents(__DIR__ . '/../var/data/tomato/reset_password_' . $username);
     }
 }

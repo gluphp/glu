@@ -1,21 +1,16 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\Extension\Mysql;
 
 use Glu\DependencyInjection\Container;
-use Glu\DependencyInjection\Reference;
 use Glu\DependencyInjection\Service;
 use Glu\Extension\BaseExtension;
 use Glu\Extension\Mysql\Source\DbalSource;
-use Glu\Extension\Twig\Templating\TwigEngine;
-use Glu\Http\Request;
-use Glu\Http\Response;
-use Glu\Routing\Route;
-use Psr\Container\ContainerInterface;
 
 final class MysqlExtension extends BaseExtension
 {
-
     public function __construct()
     {
     }

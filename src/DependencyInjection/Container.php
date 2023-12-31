@@ -1,11 +1,13 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\DependencyInjection;
 
 use Psr\Container\ContainerInterface;
 
-final class Container implements ContainerInterface {
-
+final class Container implements ContainerInterface
+{
     public const SERVICE_DATA_SOURCE_FACTORY = 'glu.data_source.factory';
     public const SERVICE_TEMPLATING_RENDERER_FACTORY = 'glu.templating.renderer_factory';
     public const SERVICE_TEMPLATING_RENDERER = 'glu.templating.renderer';
@@ -33,7 +35,8 @@ final class Container implements ContainerInterface {
         }
     }
 
-    private function instantiate(Service $definition) {
+    private function instantiate(Service $definition)
+    {
         $arguments = [];
         foreach ($definition->arguments() as $argument) {
             if (\str_starts_with($argument, '@')) {
@@ -72,7 +75,7 @@ final class Container implements ContainerInterface {
         return \array_key_exists($id, $this->synthetic) ||
             \array_key_exists($id, $this->definitions) ||
             \array_key_exists($id, $this->parameters)
-            ;
+        ;
     }
 
     public function set(Service $definition): void

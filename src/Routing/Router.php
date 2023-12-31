@@ -1,22 +1,26 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\Routing;
 
 use Glu\Http\Request;
 
-final class Router {
+final class Router
+{
     /** @var array<string, CompiledRoute[]> */
     private array $routes = [];
 
-    public function add(Route $route) {
+    public function add(Route $route)
+    {
         $parameters = [];
 
         $path = $route->path();
         $pathRegex = \preg_quote($path, '#');
         if (\strpos($path, '{')) {
-            $pathRegex = \preg_replace_callback('/\\\{([A-Za-z0-9]+)\\\}(.)?/',function($m) use (&$parameters) {
+            $pathRegex = \preg_replace_callback('/\\\{([A-Za-z0-9]+)\\\}(.)?/', function ($m) use (&$parameters) {
                 $parameters[] = $m[1];
-                return '(?P<'.$m[1].'>[^'.($m[2]??'/').']++)'.($m[2]??'');
+                return '(?P<'.$m[1].'>[^'.($m[2] ?? '/').']++)'.($m[2] ?? '');
             }, $pathRegex);
         }
 
@@ -34,7 +38,8 @@ final class Router {
         }
     }
 
-    public function match(Request $request): MatchResult {
+    public function match(Request $request): MatchResult
+    {
         $parameters = [];
         $match = null;
         foreach ($this->routes[$request->method()] ?? [] as $route) {

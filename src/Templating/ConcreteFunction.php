@@ -15,11 +15,13 @@ final class ConcreteFunction implements _Function
         $this->escape = $escape;
     }
 
-    public function name(): string {
+    public function name(): string
+    {
         return $this->name;
     }
 
-    public function callable(): callable {
+    public function callable(): callable
+    {
         return $this->callable;
     }
 

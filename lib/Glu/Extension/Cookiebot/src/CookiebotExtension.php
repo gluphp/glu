@@ -5,12 +5,9 @@ namespace Glu\Extension\Cookiebot;
 use Glu\DependencyInjection\Container;
 use Glu\DependencyInjection\Parameter;
 use Glu\DependencyInjection\Service;
-use Glu\Event\Lifecycle\ResponseReadyEvent;
-use Glu\Event\ListenerImp;
 use Glu\Extension\BaseExtension;
 use Glu\Extension\Cookiebot\Listener\CodeInjectorListener;
 use Glu\Extension\Cookiebot\Templating\CookieDeclarationFunction;
-use Psr\Container\ContainerInterface;
 
 final class CookiebotExtension extends BaseExtension
 {

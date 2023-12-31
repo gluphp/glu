@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu\Tests\Routing;
 
@@ -11,7 +13,7 @@ final class RouterTest extends TestCase
     public function test_defined_route_is_found(): void
     {
         $router = new Router();
-        $router->add('test', 'GET', '/test', function(){});
+        $router->add('test', 'GET', '/test', function () {});
         $request = (new RequestBuilder('GET', '/test'))
             ->create();
 

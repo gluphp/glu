@@ -4,13 +4,11 @@ namespace Glu\Extension\Web;
 
 use Glu\DependencyInjection\Container;
 use Glu\Extension\BaseExtension;
-use Psr\Container\ContainerInterface;
 
 final class WebExtension extends BaseExtension
 {
     public function __construct(
-    )
-    {
+    ) {
     }
 
     public static function load(Container $container, array $context): self
@@ -26,7 +24,7 @@ final class WebExtension extends BaseExtension
     public function rendererFunctions(): array
     {
         return [
-            'web.favicon' => function() {
+            'web.favicon' => function () {
                 return '<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
 <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
 <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">

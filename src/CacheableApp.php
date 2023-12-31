@@ -1,4 +1,6 @@
-<?php declare(strict_types = 1);
+<?php
+
+declare(strict_types=1);
 
 namespace Glu;
 
@@ -16,8 +18,7 @@ final class CacheableApp implements AppInterface
     public function __construct(
         AppInterface $app,
         CacheItemPoolInterface $cache = null
-    )
-    {
+    ) {
         $this->app = $app;
         $this->cache = $cache ?? new FilesystemAdapter(
             'glu',
@@ -61,12 +62,12 @@ final class CacheableApp implements AppInterface
         callable|string $callback,
         ?string $name,
         ?string $secured = null
-    )
-    {
+    ) {
         $this->app->addPath($method, $path, $callback, $name, $secured);
     }
 
-    public function addRedirect(string $from, string $to, int $code = 302) {
+    public function addRedirect(string $from, string $to, int $code = 302)
+    {
         $this->app->addRedirect($from, $to, $code);
     }
 }

@@ -2,7 +2,6 @@
 
 namespace Glu\Event\Lifecycle;
 
-use Glu\Event\Event;
 use Glu\Http\Request;
 use Glu\Http\Response;
 
