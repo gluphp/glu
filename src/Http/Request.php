@@ -83,4 +83,14 @@ final class Request {
     {
         return \mb_strtolower($this->psr7Request->getMethod());
     }
+
+    public function isGet(): bool
+    {
+        return $this->method() == 'get';
+    }
+
+    public function isPost(): bool
+    {
+        return $this->method() == 'post';
+    }
 }

@@ -8,10 +8,6 @@ final class Router {
     /** @var array<string, CompiledRoute[]> */
     private array $routes = [];
 
-    public function listall()
-    {
-        \var_dump($this->routes);die();
-    }
     public function add(Route $route) {
         $parameters = [];
 

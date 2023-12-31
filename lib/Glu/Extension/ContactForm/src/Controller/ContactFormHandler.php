@@ -18,7 +18,7 @@ final class ContactFormHandler implements Controller
 
     public function handle(Request $request, Response $response, array $args): void
     {
-        if ($request->method() === 'POST') {
+        if ($request->isPost()) {
             $this->source->insert('dev.glu.contact_form.messages', [
                 'email' => $request->form('email'),
                 'message' => $request->form('message')

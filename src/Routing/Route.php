@@ -45,7 +45,7 @@ final class Route
         return $this->path;
     }
 
-    public function controller(): callable
+    public function controller(): callable|string
     {
         return $this->controller;
     }

@@ -3,6 +3,8 @@
 namespace Glu;
 
 use Glu\Adapter\DataSource\DbalSource;
+use Glu\Adapter\DataSource\FilesystemSource;
+use Glu\Adapter\DataSource\FilesystemSourceFactory;
 use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\ListenerCompilerPass;
 use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\SourceCompilerPass;
 use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\TemplatingEngineCompilerPass;
@@ -43,7 +45,6 @@ final class App implements AppInterface
     private readonly Router $router;
     private readonly Renderer $engineResolver;
     private array $defaultHeaders;
-    private Container $container;
 
     private array $errorHandlers;
 
@@ -88,7 +89,6 @@ final class App implements AppInterface
                 )
             ));
 
-        //$environment = new Environment($appDir);
         $this->containerBuilder->register('glu.environment', Environment::class)
             ->setArguments(['%glu.app_dir%']);
 
@@ -110,6 +110,10 @@ final class App implements AppInterface
             Container::SERVICE_DATA_SOURCE_FACTORY,
             SourceFactoryFactory::class,
         )->setArgument('$sourceFactories', []);
+        $this->containerBuilder->register(
+            'glu.sources.factories.filesystem',
+            FilesystemSourceFactory::class,
+        )->addTag(Container::TAG_SOURCE_FACTORY);
         $this->containerBuilder->setParameter('glu.sources', $sources);
 
         $templatesDirs = [
@@ -121,7 +125,7 @@ final class App implements AppInterface
             ->setPublic(true);
 
         $this->containerBuilder->register('glu.templating.renderer', Renderer::class)
-            ->setFactory([new Reference('glu.templating.renderer_factory'), 'create'])
+            ->setFactory([new \Symfony\Component\DependencyInjection\Reference('glu.templating.renderer_factory'), 'create'])
             ->setPublic(true);
 
         //$this->containerBuilder->register('glu.router', Router::class);
@@ -130,20 +134,6 @@ final class App implements AppInterface
         $this->containerBuilder->addCompilerPass(new SourceCompilerPass());
         $this->containerBuilder->addCompilerPass(new ListenerCompilerPass());
         $this->containerBuilder->addCompilerPass(new TemplatingEngineCompilerPass());
-
-
-
-        /*$this->container->set(new ServiceDefinition(
-            'glu.templating.renderer',
-            RendererFactory::class,
-            [
-                'glu.templating.engines'
-            ],
-            [],
-            true,
-            'create'
-        ));
-        $this->container->setSynthetic('glu.router', $this->router);*/
 
         // event dispatcher
         $my = [];
@@ -202,7 +192,10 @@ final class App implements AppInterface
 
         $controller = $matchResult->route()->controller();
         if (is_string($controller)) {
-            $controller = $this->container->get($controller);
+            $controller = $this->containerBuilder->get($controller);
+            $controller = function(Request $request, Response $response, array $args) use ($controller) {
+                return $controller->handle($request, $response, $args);
+            };
         }
 
         $response = new Response('', 200, $this->defaultHeaders);
@@ -290,7 +283,7 @@ final class App implements AppInterface
     public function render(string $path, array $context = []): string
     {
         /** @var Renderer $renderer */
-        $renderer = $this->containerBuilder->get('glu.templating.renderer_factory');
+        $renderer = $this->containerBuilder->get('glu.templating.renderer');
         return $renderer->render($path, $this->request, $context);
     }
 
@@ -319,7 +312,6 @@ final class App implements AppInterface
         foreach ($extensions as $extensionFqn => $extensionContext) {
             /** @var Extension $extension */
             $extension = $this->containerBuilder->get($extensionFqn);
-            //$extension = $this->$extensionFqn::load($this->container, $extensionContext);
 
             foreach ($extension->containerDefinitions() as $service) {
                 if ($service instanceof Service) {

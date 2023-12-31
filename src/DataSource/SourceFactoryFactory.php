@@ -12,9 +12,9 @@ final class SourceFactoryFactory {
 
     public function create(array $context): Source
     {
-        foreach ($this->sourceFactories as $source) {
-            if ($source->supports($context)) {
-                return $source;
+        foreach ($this->sourceFactories as $sourceFactory) {
+            if ($sourceFactory->supports($context)) {
+                return $sourceFactory->create($context);
             }
         }
     }

@@ -22,6 +22,9 @@ final class SourceCompilerPass implements CompilerPassInterface
         }
 
         $sourceFactories = [];
+        foreach ($container->findTaggedServiceIds(Container::TAG_SOURCE_FACTORY) as $id => $tags) {
+            $sourceFactories[] = new Reference($id);
+        }
         $container->getDefinition(Container::SERVICE_DATA_SOURCE_FACTORY)
             ->setArgument('$sourceFactories', $sourceFactories);
     }
