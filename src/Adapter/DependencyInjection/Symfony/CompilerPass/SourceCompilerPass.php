@@ -14,20 +14,16 @@ final class SourceCompilerPass implements CompilerPassInterface
 {
     public function process(ContainerBuilder $container)
     {
-        $sourceFactories = [];
-        $sourceManager = $container->getDefinition(Container::SERVICE_DATA_SOURCE_MANAGER);
-
         $sources = $container->getParameter('glu.sources');
         foreach ($sources as $id => $context) {
             $container->register('source:' . $id, Source::class)
-                ->setFactory([SourceFactoryFactory::class, 'create'])
+                ->setFactory([new Reference(Container::SERVICE_DATA_SOURCE_FACTORY), 'create'])
                 ->addArgument($context);
         }
 
-        foreach ($container->findTaggedServiceIds(Container::TAG_SOURCE_FACTORY) as $id => $tags) {
-            $sourceFactories[] = new Reference($id);
-        }
-        $sourceManager->addArgument($sourceFactories);
+        $sourceFactories = [];
+        $container->getDefinition(Container::SERVICE_DATA_SOURCE_FACTORY)
+            ->setArgument('sourceFactories', $sourceFactories);
     }
 
 }

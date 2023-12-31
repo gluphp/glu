@@ -6,7 +6,7 @@ use Psr\Container\ContainerInterface;
 
 final class Container implements ContainerInterface {
 
-    public const SERVICE_DATA_SOURCE_MANAGER = 'glu.data_source.manager';
+    public const SERVICE_DATA_SOURCE_FACTORY = 'glu.data_source.factory';
     public const SERVICE_TEMPLATING_RENDERER_FACTORY = 'glu.templating.renderer_factory';
     public const SERVICE_TEMPLATING_RENDERER = 'glu.templating.renderer';
 

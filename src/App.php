@@ -106,6 +106,10 @@ final class App implements AppInterface
             'cache-control' => 'private'
         ];
 
+        $this->containerBuilder->register(
+            Container::SERVICE_DATA_SOURCE_FACTORY,
+            SourceFactoryFactory::class,
+        )->setArgument('sourceFactories', []);
         $this->containerBuilder->setParameter('glu.sources', $sources);
 
         $templatesDirs = [
