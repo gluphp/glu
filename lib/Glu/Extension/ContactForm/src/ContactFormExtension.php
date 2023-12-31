@@ -6,6 +6,7 @@ use Glu\Adapter\DataSource\FilesystemSource;
 use Glu\DataSource\Source;
 use Glu\DependencyInjection\Container;
 use Glu\DependencyInjection\Parameter;
+use Glu\DependencyInjection\Reference;
 use Glu\DependencyInjection\Service;
 use Glu\Extension\BaseExtension;
 use Glu\Extension\ContactForm\Controller\AdminListController;
@@ -20,12 +21,12 @@ use Psr\Container\ContainerInterface;
 
 final class ContactFormExtension extends BaseExtension
 {
-    private Source $source;
+    private string $source;
     private string $pathPrefix;
     private string $successPath;
 
     public function __construct(
-        Source $source,
+        string $source,
         string $pathPrefix = '',
         string $successPath = '/'
     )
@@ -33,17 +34,6 @@ final class ContactFormExtension extends BaseExtension
         $this->source = $source;
         $this->pathPrefix = $pathPrefix;
         $this->successPath = $successPath;
-    }
-
-    public static function load(Container $container, array $context): static
-    {
-        return new self(
-            $context['source'] ?? new FilesystemSource(
-            $container->get('data_directory') . '/glu/contact_form'
-        ),
-            $context['path_prefix'] ?? '',
-            $context['success_path'] ?? '/',
-        );
     }
 
     public function name(): string
@@ -56,11 +46,18 @@ final class ContactFormExtension extends BaseExtension
         return [
             new Service(
                 'glu.ext.contact_form.controller.contact_form_handler',
-                ContactFormHandler::class
+                ContactFormHandler::class,
+                [
+                    new Reference($this->source)
+                ]
             ),
             new Service(
                 'glu.ext.contact_form.controller.admin_list',
-                AdminListController::class
+                AdminListController::class,
+                [
+                    new Reference(Container::SERVICE_TEMPLATING_RENDERER),
+                    new Reference($this->source)
+                ]
             ),
             new Service(
                 'glu.ext.contact_form.templating.function.contact_form',

@@ -294,9 +294,17 @@ final class App implements AppInterface
         $templatingFunctions = $this->containerBuilder->getParameter('glu.templating.functions');
 
         foreach ($extensions as $extensionFqn => $extensionContext) {
+            $arguments = [];
+            foreach ($extensionContext as $id) {
+                if ($this->containerBuilder->hasParameter($id)) {
+                    $arguments[] = '%' . $id . '%';
+                } else {
+                    $arguments[] = $id;
+                }
+            }
             $this->containerBuilder->register($extensionFqn, $extensionFqn)
                 ->setArguments(
-                    $extensionContext
+                    $arguments
                 );
         }
 
