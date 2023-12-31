@@ -13,11 +13,11 @@ final class TemplatingEngineCompilerPass implements CompilerPassInterface
     public function process(ContainerBuilder $container)
     {
         $engines = [];
-        $renderer = $container->getDefinition(Container::SERVICE_TEMPLATING_RENDERER_FACTORY);
+        $rendererFactory = $container->getDefinition(Container::SERVICE_TEMPLATING_RENDERER_FACTORY);
         foreach ($container->findTaggedServiceIds(Container::TAG_TEMPLATING_ENGINE) as $id => $tags) {
             $engines[] = new Reference($id);
         }
-        $renderer->addArgument($engines);
+        $rendererFactory->setArgument('$engines', $engines);
 
         $functions = [];
         foreach ($container->findTaggedServiceIds(Container::TAG_TEMPLATING_FUNCTION) as $id => $tags) {

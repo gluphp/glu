@@ -2,7 +2,7 @@
 
 namespace Glu\DataSource;
 
-final class SourceFactoryFactory implements SourceFactory {
+final class SourceFactoryFactory {
     /** @var SourceFactory[] */
     private array $sourceFactories;
 

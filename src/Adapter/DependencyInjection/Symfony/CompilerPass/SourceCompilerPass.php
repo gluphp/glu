@@ -23,7 +23,7 @@ final class SourceCompilerPass implements CompilerPassInterface
 
         $sourceFactories = [];
         $container->getDefinition(Container::SERVICE_DATA_SOURCE_FACTORY)
-            ->setArgument('sourceFactories', $sourceFactories);
+            ->setArgument('$sourceFactories', $sourceFactories);
     }
 
 }

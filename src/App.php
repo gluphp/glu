@@ -109,7 +109,7 @@ final class App implements AppInterface
         $this->containerBuilder->register(
             Container::SERVICE_DATA_SOURCE_FACTORY,
             SourceFactoryFactory::class,
-        )->setArgument('sourceFactories', []);
+        )->setArgument('$sourceFactories', []);
         $this->containerBuilder->setParameter('glu.sources', $sources);
 
         $templatesDirs = [
@@ -117,7 +117,11 @@ final class App implements AppInterface
         ];
 
         $this->containerBuilder->register('glu.templating.renderer_factory', RendererFactory::class)
-            ->setFactory([RendererFactory::class, 'create'])
+            ->setArgument('$engines', [])
+            ->setPublic(true);
+
+        $this->containerBuilder->register('glu.templating.renderer', Renderer::class)
+            ->setFactory([new Reference('glu.templating.renderer_factory'), 'create'])
             ->setPublic(true);
 
         //$this->containerBuilder->register('glu.router', Router::class);

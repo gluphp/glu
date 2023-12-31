@@ -6,7 +6,14 @@ use Glu\DependencyInjection\Container;
 use Glu\Http\Request;
 
 final class RendererFactory {
-    public static function create(array $engines) {
-        return new Renderer($engines);
+    private array $engines;
+
+    public function __construct(array $engines)
+    {
+        $this->engines = $engines;
+    }
+
+    public function create() {
+        return new Renderer($this->engines);
     }
 }
