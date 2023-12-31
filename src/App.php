@@ -96,11 +96,6 @@ final class App implements AppInterface
         $this->logger = $logger ?? new NullLogger();
         $this->router = new Router();
 
-        $this->container = new Container($services, [
-            'data_directory' => $appDir . '/var/data/',
-            'glu.cache_dir' => $appDir . '/var/cache/'
-        ]);
-
         $this->defaultHeaders = [
             'content-type' => 'text/html; charset=UTF-8',
             'cache-control' => 'private'
@@ -146,7 +141,7 @@ final class App implements AppInterface
                 $my[] = $listener;
             }
         }
-        $this->eventDispatcher = new EventDispatcher($my, $this->container);
+        $this->eventDispatcher = new EventDispatcher($my, $this->containerBuilder);
 
         $this->loadExtensions($extensions);
 

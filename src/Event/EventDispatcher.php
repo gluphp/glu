@@ -3,20 +3,21 @@
 namespace Glu\Event;
 
 use Glu\DependencyInjection\Container;
+use Psr\Container\ContainerInterface;
 
 final class EventDispatcher
 {
     /** @var array<string, ListenerImp[]> */
     private array $listeners;
 
-    private Container $locator;
+    private ContainerInterface $container;
 
     /**
      * @param ListenerImp[] $listeners
      */
-    public function __construct(array $listeners, Container $locator)
+    public function __construct(array $listeners, ContainerInterface $container)
     {
-        $this->locator = $locator;
+        $this->container = $container;
         $this->listeners = [];
         foreach ($listeners as $listener) {
             $this->register($listener);
@@ -38,7 +39,7 @@ final class EventDispatcher
             if (\is_callable($listener->action())) {
                 $listener->action()($event, $stop);
             } else {
-                $this->locator->get($listener->action())($event, $stop);
+                $this->container->get($listener->action())($event, $stop);
             }
 
             if ($stop) {
