@@ -10,7 +10,7 @@ use Glu\DependencyInjection\Reference;
 use Glu\DependencyInjection\Service;
 use Glu\Extension\BaseExtension;
 use Glu\Extension\ContactForm\Controller\AdminListController;
-use Glu\Extension\ContactForm\Controller\ContactFormHandler;
+use Glu\Extension\ContactForm\Controller\ContactFormHandlerController;
 use Glu\Extension\ContactForm\Templating\ContactFormFunction;
 use Glu\Extension\GoogleAnalytics\Listener\CodeInjectorListener;
 use Glu\Http\Request;
@@ -46,7 +46,7 @@ final class ContactFormExtension extends BaseExtension
         return [
             new Service(
                 'glu.ext.contact_form.controller.contact_form_handler',
-                ContactFormHandler::class,
+                ContactFormHandlerController::class,
                 [
                     new Reference($this->source)
                 ]
@@ -70,7 +70,6 @@ final class ContactFormExtension extends BaseExtension
 
     public function routes(): array
     {
-        $source = $this->source;
         return [
             new Route(
                 $this->name() . '.routes.handler',
