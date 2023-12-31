@@ -1,0 +1,25 @@
+{
+	"name": "glu/ext-mysql",
+	"autoload": {
+		"psr-4": {
+			"Glu\\Extension\\Mysql\\": "src/"
+		}
+	},
+	"autoload-dev": {
+		"psr-4": {
+			"Glu\\Extension\\Mysql\\Tests\\": "tests/"
+		}
+	},
+	"authors": [
+		{
+			"name": "Raul Fraile",
+			"email": "raulfraile@gmail.com"
+		}
+	],
+	"require-dev": {
+		"phpunit/phpunit": "^10.2"
+	},
+	"require": {
+		"glu/glu": "*"
+	}
+}

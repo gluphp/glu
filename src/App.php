@@ -4,7 +4,10 @@ namespace Glu;
 
 use Glu\Adapter\DataSource\DbalSource;
 use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\ListenerCompilerPass;
+use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\SourceCompilerPass;
 use Glu\Adapter\DependencyInjection\Symfony\CompilerPass\TemplatingEngineCompilerPass;
+use Glu\DataSource\Source;
+use Glu\DataSource\SourceFactoryFactory;
 use Glu\DependencyInjection\Container;
 use Glu\DependencyInjection\Reference;
 use Glu\DependencyInjection\Service;
@@ -103,27 +106,11 @@ final class App implements AppInterface
             'cache-control' => 'private'
         ];
 
-        foreach ($sources as $name => $dsn) {
-            $this->container->set(new Service(
-                'source_' . $name,
-                DbalSource::class,
-                [$dsn],
-                [],
-                true,
-                'create'
-            ));
-        }
+        $this->containerBuilder->setParameter('glu.sources', $sources);
 
         $templatesDirs = [
             $templatesDir
         ];
-
-        /*$this->engineResolver = new TwigTemplateRenderer(
-            $templatesDirs,
-            $this->router,
-            $appDir . '/var/cache/' . $environment->get('global', 'env')
-        );*/
-
 
         $this->containerBuilder->register('glu.templating.renderer_factory', RendererFactory::class)
             ->setFactory([RendererFactory::class, 'create'])
@@ -132,6 +119,7 @@ final class App implements AppInterface
         //$this->containerBuilder->register('glu.router', Router::class);
         $this->containerBuilder->set('glu.router', $this->router);
 
+        $this->containerBuilder->addCompilerPass(new SourceCompilerPass());
         $this->containerBuilder->addCompilerPass(new ListenerCompilerPass());
         $this->containerBuilder->addCompilerPass(new TemplatingEngineCompilerPass());
 

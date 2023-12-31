@@ -26,8 +26,8 @@ final class ContactFormExtension extends BaseExtension
 
     public function __construct(
         Source $source,
-        string $pathPrefix,
-        string $successPath
+        string $pathPrefix = '',
+        string $successPath = '/'
     )
     {
         $this->source = $source;
@@ -39,10 +39,10 @@ final class ContactFormExtension extends BaseExtension
     {
         return new self(
             $context['source'] ?? new FilesystemSource(
-                $container->get('data_directory') . '/glu/contact_form'
-            ),
-                $context['path_prefix'] ?? '',
-                $context['success_path'] ?? '/',
+            $container->get('data_directory') . '/glu/contact_form'
+        ),
+            $context['path_prefix'] ?? '',
+            $context['success_path'] ?? '/',
         );
     }
 

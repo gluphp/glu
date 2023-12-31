@@ -6,12 +6,14 @@ use Psr\Container\ContainerInterface;
 
 final class Container implements ContainerInterface {
 
+    public const SERVICE_DATA_SOURCE_MANAGER = 'glu.data_source.manager';
     public const SERVICE_TEMPLATING_RENDERER_FACTORY = 'glu.templating.renderer_factory';
     public const SERVICE_TEMPLATING_RENDERER = 'glu.templating.renderer';
 
     public const TAG_LISTENER = 'glu.tag.listener';
     public const TAG_TEMPLATING_ENGINE = 'glu.tag.templating_engine';
     public const TAG_TEMPLATING_FUNCTION = 'glu.tag.templating_function';
+    public const TAG_SOURCE_FACTORY = 'glu.tag.source_factory';
 
     private array $parameters;
     /** @var Service[] */
