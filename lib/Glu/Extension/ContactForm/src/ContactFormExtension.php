@@ -48,7 +48,9 @@ final class ContactFormExtension extends BaseExtension
                 'glu.ext.contact_form.controller.contact_form_handler',
                 ContactFormHandlerController::class,
                 [
-                    new Reference($this->source)
+                    new Reference($this->source),
+                    $this->pathPrefix,
+                    $this->successPath
                 ]
             ),
             new Service(
